@@ -13,7 +13,7 @@ namespace SmartPrint.Controllers
         public ActionResult Index()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
-            ViewBag.Country = "India";//claimsIdentity.FindFirst(ClaimTypes.Country).Value;
+            //ViewBag.Country = "India";//claimsIdentity.FindFirst(ClaimTypes.Country).Value;
 
             return View();
             //return View();

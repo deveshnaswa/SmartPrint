@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using SmartPrint.Models;
 using System.Security.Claims;
+using SmartPrint.CustomLibraries;
 
 namespace SmartPrint.Controllers
 {
@@ -22,18 +23,14 @@ namespace SmartPrint.Controllers
         */
 
         [HttpGet]
-        public ActionResult Login(string returnUrl)
+        public ActionResult Login()
         {
-            var model = new LoginModel
-            {
-                ReturnUrl = returnUrl
-            };
-            return View(model);
+            return View();
 
         }
 
         [HttpPost]
-        public ActionResult Login(LoginModel model)
+        public ActionResult Login(Users model)
         {
             if (!ModelState.IsValid) //Checks if input fields have the correct format
             {
@@ -53,7 +50,7 @@ namespace SmartPrint.Controllers
                 var authManager = ctx.Authentication;
                 authManager.SignIn(identity);
 
-                return Redirect(GetRedirectUrl(model.ReturnUrl));
+                return RedirectToAction("Index","Home");
             }
 
             ModelState.AddModelError("", "Invalid email or password");
@@ -63,14 +60,6 @@ namespace SmartPrint.Controllers
            
         }
 
-        private string GetRedirectUrl(string returnUrl)
-        {
-            if (string.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
-            {
-                return Url.Action("index", "home");
-            }
-            return returnUrl;
-        }
         public ActionResult Logout()
         {
             var ctx = Request.GetOwinContext();
@@ -78,6 +67,44 @@ namespace SmartPrint.Controllers
 
             authManager.SignOut("ApplicationCookie");
             return RedirectToAction("Login", "Auth");
+        }
+
+        public ActionResult Registration()
+        {
+            return View();
+        }
+
+        
+
+        [HttpPost]
+        public ActionResult Registration(Users model)
+        {
+            if (ModelState.IsValid)
+            {
+                using (var db = new MainDbContext())
+                {
+                    var encryptedPassword = CustomEnrypt.Encrypt(model.UserPass);
+                    var user = db.Users.Create();
+                    user.FName= model.FName;
+                    user.LName = model.LName;
+                      user.UserTypeId= model.UserTypeId;
+                   user.UserCode = model.UserCode;
+                    user.UserEmail = model.UserEmail;
+                    user.UserPass= encryptedPassword;
+                   user.IsActive= model.IsActive;
+                    user.UserPhone= model.UserPhone;
+                    user.AddedOn = DateTime.Now;
+                    user.EditedOn= DateTime.Now;
+                    user.RowStatus= model.RowStatus;
+                    db.Users.Add(user);
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "One or more fields have been");
+            }
+            return View();
         }
 
     }

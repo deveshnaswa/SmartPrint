@@ -1,0 +1,39 @@
+﻿@model SmartPrint.Models.Users
+@{
+    ViewBag.Title = "Registration";
+}
+ 
+<h2>Registration</h2>
+ 
+@using (Html.BeginForm())
+{
+    
+    @Html.LabelFor(u => u.UserEmail)<br />
+    @Html.TextBoxFor(u => u.UserEmail)<br />
+    @Html.LabelFor(u => u.UserPass)<br />
+    @Html.PasswordFor(u => u.UserPass)<br />
+    @Html.LabelFor(u => u.FName)<br />
+    @Html.TextBoxFor(u => u.FName)<br />
+    @Html.LabelFor(u => u.LName)<br />
+    @Html.TextBoxFor(u => u.LName)<br />
+    @Html.LabelFor((u => u.UserPhone))
+    @Html.TextBoxFor(u => u.UserPhone)<br />
+    @Html.LabelFor(u => u.UserCode)<br />
+    @Html.TextBoxFor(u => u.UserCode)<br />
+    @Html.LabelFor(u => u.UserTypeId)<br />
+   
+
+         var listItems = new List<SelectListItem>()
+         {
+             new SelectListItem {Text = "Admin",   Value = "1"},
+             new SelectListItem {Text = "Manager", Value = "2"},
+         new SelectListItem {Text = "Student", Value = "3"}
+         };
+
+    @Html.DropDownListFor(u => u.UserTypeId, listItems, string.Empty) <br/>
+    @Html.LabelFor(u => u.IsActive)<br />
+    @Html.TextBoxFor(u => u.IsActive)<br />
+    <p>
+    <button type="submit">Register</button>
+    </p>
+}

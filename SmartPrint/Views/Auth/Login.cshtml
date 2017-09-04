@@ -1,4 +1,4 @@
-﻿@model SmartPrint.Models.LoginModel
+﻿@model SmartPrint.Models.Users
 @{
     ViewBag.Title = "Login";
 }
@@ -8,11 +8,10 @@
 @Html.ValidationSummary(true)
 @using (Html.BeginForm())
 {
-    @Html.EditorForModel()
-    <p>
-        <button type="submit">Log In</button>
-    </p>
+    @Html.LabelFor(u=> u.UserEmail) <br/>
+    @Html.TextBoxFor(u => u.UserEmail) <br />
+    @Html.LabelFor(u=> u.UserPass) <br/>
+    @Html.PasswordFor(u=> u.UserPass) <br/>
 
-    <h1>@Model.UserEmail</h1>
-    <h1>@Model.UserPass</h1>
+
 }

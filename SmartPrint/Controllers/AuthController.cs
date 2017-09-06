@@ -55,6 +55,9 @@ namespace SmartPrint.Controllers
                     var materializeName = getName.ToList();
                     var name = materializeName[0];
 
+                    var getUserId = db.Users.Where(u => u.UserEmail == model.UserEmail).Select(u => u.UserId);
+                    var materializeUserId = getUserId.ToList();
+                    var userId=  materializeUserId[0];
                     //var getCountry = db.Users.Where(u = &amp; gt; u.Email == model.Email).Select(u = &amp; gt; u.Country);
                     //var materializeCountry = getCountry.ToList();
                     //var country = materializeCountry[0];
@@ -65,8 +68,9 @@ namespace SmartPrint.Controllers
 
                     var identity = new ClaimsIdentity(new[] {
                         new Claim(ClaimTypes.Name, name),
-                        new Claim(ClaimTypes.Email, email)
-                    
+                        new Claim(ClaimTypes.Email, email),
+                        //new Claim(ClaimTypes., userId.ToString())
+
                     }, "ApplicationCookie");
 
                     var ctx = Request.GetOwinContext();

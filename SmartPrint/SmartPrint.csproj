@@ -142,7 +142,14 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="MainDbContext.cs" />
+    <Compile Include="Models\Configuration.cs" />
+    <Compile Include="Models\DocTypes.cs" />
+    <Compile Include="Models\PrintCost.cs" />
+    <Compile Include="Models\PrintJob.cs" />
+    <Compile Include="Models\UserDocs.cs" />
     <Compile Include="Models\Users.cs" />
+    <Compile Include="Models\UserTxn.cs" />
+    <Compile Include="Models\UserTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

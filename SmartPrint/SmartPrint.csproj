@@ -136,6 +136,7 @@
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\UserTypesController.cs" />
     <Compile Include="CustomLibaries\CustomDecrypt.cs" />
     <Compile Include="CustomLibaries\CustomEncrypt.cs" />
@@ -143,13 +144,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="MainDbContext.cs" />
-    <Compile Include="Models\Configuration.cs" />
-    <Compile Include="Models\DocTypes.cs" />
-    <Compile Include="Models\PrintCost.cs" />
-    <Compile Include="Models\PrintJob.cs" />
-    <Compile Include="Models\UserDocs.cs" />
     <Compile Include="Models\Users.cs" />
-    <Compile Include="Models\UserTxn.cs" />
     <Compile Include="Models\UserTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -168,6 +163,11 @@
     <Content Include="Views\UserTypes\Details.cshtml" />
     <Content Include="Views\UserTypes\Edit.cshtml" />
     <Content Include="Views\UserTypes\Index.cshtml" />
+    <Content Include="Views\Users\Create.cshtml" />
+    <Content Include="Views\Users\Delete.cshtml" />
+    <Content Include="Views\Users\Details.cshtml" />
+    <Content Include="Views\Users\Edit.cshtml" />
+    <Content Include="Views\Users\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

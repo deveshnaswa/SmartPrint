@@ -17,5 +17,6 @@ namespace SmartPrint
         public DbSet<Users> Users { get; set; }
 
         public System.Data.Entity.DbSet<SmartPrint.Models.UserTypes> UserTypes { get; set; }
+
     }
 }

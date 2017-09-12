@@ -1,0 +1,90 @@
+﻿@model SmartPrint.Models.DocTypes
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>DocTypes</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DocType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocExt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocExt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocIcon)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocIcon)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsActive)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AddedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AddedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AddedOn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AddedOn)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EditedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EditedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EditedOn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EditedOn)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RowStatus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RowStatus)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.DocTypeId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

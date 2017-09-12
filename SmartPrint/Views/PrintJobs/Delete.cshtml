@@ -1,0 +1,304 @@
+﻿@model SmartPrint.Models.PrintJobs
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>PrintJobs</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocExt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocExt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocFileNameOnServer)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocFileNameOnServer)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocFilePath)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocFilePath)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocTotalPages)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocTotalPages)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PrintcostId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PrintcostId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MonoPages)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MonoPages)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ColorPages)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ColorPages)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsColor)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsColor)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsDuplex)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsDuplex)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsCollate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsCollate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UnitCost)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UnitCost)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MonoUnitcost)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MonoUnitcost)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ColorUnitcost)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ColorUnitcost)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UnitItem)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UnitItem)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.JobRemarks)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.JobRemarks)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PagesFrom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PagesFrom)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PagesTo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PagesTo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NumCopies)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NumCopies)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalPageCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TotalPageCount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalPageCost)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TotalPageCost)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreditUsed)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreditUsed)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.JobError)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.JobError)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.JobErrorRemarks)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.JobErrorRemarks)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PrinterName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PrinterName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PrinterPath)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PrinterPath)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.JobStatus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.JobStatus)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AddedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AddedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AddedOn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AddedOn)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EditedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EditedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EditedOn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EditedOn)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RowStatus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RowStatus)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

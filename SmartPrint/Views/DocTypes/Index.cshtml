@@ -1,0 +1,81 @@
+﻿@model IEnumerable<SmartPrint.Models.DocTypes>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DocType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocExt)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocIcon)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AddedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AddedOn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EditedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EditedOn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RowStatus)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocExt)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocIcon)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsActive)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AddedBy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AddedOn)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EditedBy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EditedOn)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RowStatus)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.DocTypeId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.DocTypeId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.DocTypeId })
+        </td>
+    </tr>
+}
+
+</table>

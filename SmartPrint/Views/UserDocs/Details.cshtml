@@ -1,0 +1,114 @@
+﻿@model SmartPrint.Models.UserDocs
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>UserDocs</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DocName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocExt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocExt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocFileName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocFileName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.gDocFilePath)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.gDocFilePath)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocCreateDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocCreateDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AddedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AddedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AddedOn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AddedOn)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EditedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EditedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EditedOn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EditedOn)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RowStatus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RowStatus)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.DocId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

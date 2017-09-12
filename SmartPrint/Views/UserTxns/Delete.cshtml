@@ -1,0 +1,120 @@
+﻿@model SmartPrint.Models.UserTxns
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>UserTxns</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TxnType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TxnType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TxnAmount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TxnAmount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TxnDateTiime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TxnDateTiime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TxnBalance)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TxnBalance)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TxnRefJobId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TxnRefJobId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TxnStatus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TxnStatus)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AddedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AddedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AddedOn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AddedOn)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EditedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EditedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EditedOn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EditedOn)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RowStatus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RowStatus)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

@@ -55,6 +55,14 @@ namespace SmartPrint
             return base.SaveChanges();
         }
 
-        
+        public System.Data.Entity.DbSet<SmartPrint.Models.DocTypes> DocTypes { get; set; }
+
+        public System.Data.Entity.DbSet<SmartPrint.Models.UserDocs> UserDocs { get; set; }
+
+        public System.Data.Entity.DbSet<SmartPrint.Models.UserTxns> UserTxns { get; set; }
+
+        public System.Data.Entity.DbSet<SmartPrint.Models.PrintCosts> PrintCosts { get; set; }
+
+        public System.Data.Entity.DbSet<SmartPrint.Models.PrintJobs> PrintJobs { get; set; }
     }
 }

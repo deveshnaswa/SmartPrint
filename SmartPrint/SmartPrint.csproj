@@ -135,8 +135,13 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="Controllers\DocTypesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PrintCostsController.cs" />
+    <Compile Include="Controllers\PrintJobsController.cs" />
+    <Compile Include="Controllers\UserDocsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Controllers\UserTxnsController.cs" />
     <Compile Include="Controllers\UserTypesController.cs" />
     <Compile Include="CustomLibaries\CustomDecrypt.cs" />
     <Compile Include="CustomLibaries\CustomEncrypt.cs" />
@@ -175,6 +180,31 @@
     <Content Include="Views\Users\Details.cshtml" />
     <Content Include="Views\Users\Edit.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\DocTypes\Create.cshtml" />
+    <Content Include="Views\DocTypes\Delete.cshtml" />
+    <Content Include="Views\DocTypes\Details.cshtml" />
+    <Content Include="Views\DocTypes\Edit.cshtml" />
+    <Content Include="Views\DocTypes\Index.cshtml" />
+    <Content Include="Views\UserDocs\Create.cshtml" />
+    <Content Include="Views\UserDocs\Delete.cshtml" />
+    <Content Include="Views\UserDocs\Details.cshtml" />
+    <Content Include="Views\UserDocs\Edit.cshtml" />
+    <Content Include="Views\UserDocs\Index.cshtml" />
+    <Content Include="Views\UserTxns\Create.cshtml" />
+    <Content Include="Views\UserTxns\Delete.cshtml" />
+    <Content Include="Views\UserTxns\Details.cshtml" />
+    <Content Include="Views\UserTxns\Edit.cshtml" />
+    <Content Include="Views\UserTxns\Index.cshtml" />
+    <Content Include="Views\PrintCosts\Create.cshtml" />
+    <Content Include="Views\PrintCosts\Delete.cshtml" />
+    <Content Include="Views\PrintCosts\Details.cshtml" />
+    <Content Include="Views\PrintCosts\Edit.cshtml" />
+    <Content Include="Views\PrintCosts\Index.cshtml" />
+    <Content Include="Views\PrintJobs\Create.cshtml" />
+    <Content Include="Views\PrintJobs\Delete.cshtml" />
+    <Content Include="Views\PrintJobs\Details.cshtml" />
+    <Content Include="Views\PrintJobs\Edit.cshtml" />
+    <Content Include="Views\PrintJobs\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

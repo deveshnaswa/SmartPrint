@@ -1,0 +1,99 @@
+﻿@model IEnumerable<SmartPrint.Models.UserDocs>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DocName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocExt)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocFileName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.gDocFilePath)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocCreateDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AddedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AddedOn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EditedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EditedOn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RowStatus)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocExt)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocFileName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.gDocFilePath)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocCreateDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AddedBy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AddedOn)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EditedBy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EditedOn)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RowStatus)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.DocId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.DocId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.DocId })
+        </td>
+    </tr>
+}
+
+</table>

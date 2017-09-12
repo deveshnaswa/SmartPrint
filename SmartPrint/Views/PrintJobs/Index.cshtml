@@ -1,0 +1,237 @@
+﻿@model IEnumerable<SmartPrint.Models.PrintJobs>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.UserId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocExt)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocFileNameOnServer)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocFilePath)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocTotalPages)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PrintcostId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MonoPages)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ColorPages)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsColor)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsDuplex)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsCollate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UnitCost)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MonoUnitcost)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ColorUnitcost)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UnitItem)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.JobRemarks)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PagesFrom)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PagesTo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NumCopies)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalPageCount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalPageCost)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreditUsed)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.JobError)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.JobErrorRemarks)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PrinterName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PrinterPath)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.JobStatus)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AddedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AddedOn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EditedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EditedOn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RowStatus)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocExt)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocFileNameOnServer)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocFilePath)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocTotalPages)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PrintcostId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MonoPages)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ColorPages)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsColor)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsDuplex)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsCollate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UnitCost)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MonoUnitcost)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ColorUnitcost)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UnitItem)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.JobRemarks)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PagesFrom)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PagesTo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NumCopies)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TotalPageCount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TotalPageCost)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreditUsed)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.JobError)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.JobErrorRemarks)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PrinterName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PrinterPath)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.JobStatus)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AddedBy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AddedOn)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EditedBy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EditedOn)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RowStatus)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.JobId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.JobId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.JobId })
+        </td>
+    </tr>
+}
+
+</table>

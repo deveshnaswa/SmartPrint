@@ -64,5 +64,13 @@ namespace SmartPrint
         public System.Data.Entity.DbSet<SmartPrint.Models.PrintCosts> PrintCosts { get; set; }
 
         public System.Data.Entity.DbSet<SmartPrint.Models.PrintJobs> PrintJobs { get; set; }
+
+        public System.Data.Entity.DbSet<SmartPrint.Models.Configurations> Configurations { get; set; }
+        public System.Data.Entity.DbSet<SmartPrint.Models.RStatus> RStatus { get; set; }
+        public System.Data.Entity.DbSet<SmartPrint.Models.UStatus> UStatus { get; set; }
+
+        // public System.Data.Entity.DbSet<SmartPrint.Models.RecordStatus> RecordStatuses{ get; set; }
+
+
     }
 }

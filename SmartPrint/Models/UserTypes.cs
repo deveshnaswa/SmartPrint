@@ -35,6 +35,8 @@ namespace SmartPrint.Models
         public DateTime EditedOn { get; set; }
         public int RowStatus { get; set; }
 
+       // public virtual RecordStatus RecordStatus { get; set; }
+
     }
 }
  

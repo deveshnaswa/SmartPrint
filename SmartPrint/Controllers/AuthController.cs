@@ -125,7 +125,7 @@ namespace SmartPrint.Controllers
                    user.UserCode = model.UserCode;
                     user.UserEmail = model.UserEmail;
                     user.UserPass= encryptedPassword;
-                   user.IsActive= model.IsActive;
+                   user.UStatusId = model.UStatusId;
                     user.UserPhone= model.UserPhone;
                     user.AddedOn = DateTime.Now;
                     user.EditedOn= DateTime.Now;

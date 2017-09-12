@@ -37,7 +37,8 @@ namespace SmartPrint.Models
 
         public string UserPhone { get; set; }
 
-        public int IsActive { get; set; }
+        public int UStatusId { get; set; }
+        public virtual UStatus UStatus { get; set; }
 
         public int AddedBy { get; set; }
 
@@ -51,6 +52,7 @@ namespace SmartPrint.Models
         public DateTime EditedOn { get; set; }
 
         public int RowStatus { get; set; }
+        //public virtual RecordStatus RecordStatus{ get; set; }
 
     }
 }

@@ -79,10 +79,21 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.UStatusId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                @Html.DropDownList("UStatusId", null, htmlAttributes: new { @class = "form-control" })
+                
+               <!-- @Html.DropDownListFor(model => model.UStatusId, 
+                    new SelectList(new List<SelectListItem>
+                    {
+                        new SelectListItem { Text = "Active" , Value = "1"},
+                        new SelectListItem { Text = "InActive", Value = "0" }
+                    },
+                        "Value", // property to be set as Value of dropdown item
+                        "Text",  // property to be used as text of dropdown item
+                        "True"), // value that should be set selected of dropdown
+                    new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.UStatusId, "", new {@class = "text-danger"})-->
             </div>
         </div>
         <!--
@@ -117,14 +128,22 @@
                 @Html.ValidationMessageFor(model => model.EditedOn, "", new { @class = "text-danger" })
             </div>
         </div>
-        -->
+        
         <div class="form-group">
             @Html.LabelFor(model => model.RowStatus, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.RowStatus, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.RowStatus, "", new { @class = "text-danger" })
             </div>
+        </div>-->
+        <div class="form-group">
+            @Html.LabelFor(model => model.RowStatus, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("RowStatus", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.RowStatus, "", new { @class = "text-danger" })
+            </div>
         </div>
+       
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

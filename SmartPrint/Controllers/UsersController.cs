@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using SmartPrint.CustomLibraries;
+using SmartPrint.Models;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using SmartPrint;
-using SmartPrint.CustomLibraries;
-using SmartPrint.Models;
 
 namespace SmartPrint.Controllers
 {
@@ -42,6 +38,7 @@ namespace SmartPrint.Controllers
         public ActionResult Create()
         {
             ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
+            
 
             return View();
         }
@@ -57,6 +54,8 @@ namespace SmartPrint.Controllers
             {
                 var encryptedPassword = CustomEnrypt.Encrypt(users.UserPass);
                 users.UserPass = encryptedPassword;
+
+                users.RowStatus = 1;
                 db.Users.Add(users);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -125,10 +124,24 @@ namespace SmartPrint.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Users users = db.Users.Find(id);
-            db.Users.Remove(users);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+
+            try
+            {
+                Users users = db.Users.Find(id);
+                users.RowStatus = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
+                db.Entry(users).State = EntityState.Modified;
+                //db.Users.Remove(users);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw e;
+            }
+
         }
 
         protected override void Dispose(bool disposing)

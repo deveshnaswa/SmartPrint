@@ -110,10 +110,26 @@ namespace SmartPrint.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            UserTxns userTxns = db.UserTxns.Find(id);
-            db.UserTxns.Remove(userTxns);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+
+            try
+            {
+                UserTxns userTxns = db.UserTxns.Find(id);
+                userTxns.RowStatus = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
+                db.Entry(userTxns).State = EntityState.Modified;
+                //db.Users.Remove(users);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw e;
+            }
+
+           
+          
         }
 
         protected override void Dispose(bool disposing)

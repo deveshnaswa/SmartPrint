@@ -58,20 +58,26 @@ namespace SmartPrint.Controllers
                     var getUserId = db.Users.Where(u => u.UserEmail == model.UserEmail).Select(u => u.UserId);
                     var materializeUserId = getUserId.ToList();
                     var userId=  materializeUserId[0];
-                    //var getCountry = db.Users.Where(u = &amp; gt; u.Email == model.Email).Select(u = &amp; gt; u.Country);
-                    //var materializeCountry = getCountry.ToList();
-                    //var country = materializeCountry[0];
+
+
+                    var getUserTypeId= db.Users.Where(u => u.UserEmail== model.UserEmail).Select(u => u.UserTypeId);
+                    var materializeUserTypeId = getUserTypeId.ToList();
+                    var UserTypeId= materializeUserTypeId[0];
 
                     var getEmail = db.Users.Where(u =>u.UserEmail== model.UserEmail).Select(u =>u.UserEmail);
                     var materializeEmail = getEmail.ToList();
                     var email = materializeEmail[0];
 
+
                     var identity = new ClaimsIdentity(new[] {
                         new Claim(ClaimTypes.Name, name),
                         new Claim(ClaimTypes.Email, email),
-                        //new Claim(ClaimTypes., userId.ToString())
+                        new Claim(ClaimTypes.NameIdentifier,userId.ToString()),
+                        new Claim(ClaimTypes.Role,UserTypeId.ToString())
 
-                    }, "ApplicationCookie");
+                    //  new Claim(ClaimTypes.n, userId.ToString())
+
+                }, "ApplicationCookie");
 
                     var ctx = Request.GetOwinContext();
                     var authManager = ctx.Authentication;

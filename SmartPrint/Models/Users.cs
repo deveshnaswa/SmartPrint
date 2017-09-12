@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
 namespace SmartPrint.Models
 {
-    public class Users
+
+    public class Users : ITrackable
     {
         [Key]
         public int UserId { get; set; }
@@ -29,6 +31,8 @@ namespace SmartPrint.Models
 
         public int UserTypeId { get; set; }
 
+        public virtual UserTypes UserTypes{ get; set; }
+
         public string UserCode { get; set; }
 
         public string UserPhone { get; set; }
@@ -38,10 +42,11 @@ namespace SmartPrint.Models
         public int AddedBy { get; set; }
 
         [DataType(DataType.DateTime)]
+        [Column(TypeName = "DateTime2")]
         public DateTime AddedOn { get; set; }
 
         public int EditedBy { get; set; }
-
+        [Column(TypeName = "DateTime2")]
         [DataType(DataType.DateTime)]
         public DateTime EditedOn { get; set; }
 

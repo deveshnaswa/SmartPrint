@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SmartPrint;
+using SmartPrint.CustomLibraries;
 using SmartPrint.Models;
 
 namespace SmartPrint.Controllers
@@ -15,7 +16,8 @@ namespace SmartPrint.Controllers
     {
         private MainDbContext db = new MainDbContext();
 
-        // GET: Users
+       
+
         public ActionResult Index()
         {
             return View(db.Users.ToList());
@@ -39,6 +41,8 @@ namespace SmartPrint.Controllers
         // GET: Users/Create
         public ActionResult Create()
         {
+            ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
+
             return View();
         }
 
@@ -51,11 +55,13 @@ namespace SmartPrint.Controllers
         {
             if (ModelState.IsValid)
             {
+                var encryptedPassword = CustomEnrypt.Encrypt(users.UserPass);
+                users.UserPass = encryptedPassword;
                 db.Users.Add(users);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
+           // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType", users.UserTypeId);
             return View(users);
         }
 
@@ -67,10 +73,15 @@ namespace SmartPrint.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Users users = db.Users.Find(id);
+
             if (users == null)
             {
                 return HttpNotFound();
             }
+            var decryptPassword = CustomDecrypt.Decrypt(users.UserPass);
+            users.UserPass = decryptPassword;
+            ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType",users.UserTypeId);
+
             return View(users);
         }
 
@@ -79,10 +90,14 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UserId,FName,LName,UserEmail,UserPass,UserTypeId,UserCode,UserPhone,IsActive,AddedBy,AddedOn,EditedBy,EditedOn,RowStatus")] Users users)
+        public ActionResult Edit([Bind(Include = "UserId,FName,LName,UserEmail,UserPass,UserTypeId,UserCode,UserPhone,IsActive,EditedBy,EditedOn,RowStatus", Exclude = "AddedBy,AddedOn")] Users users)
         {
             if (ModelState.IsValid)
             {
+                var encryptedPassword = CustomEnrypt.Encrypt(users.UserPass);
+                users.UserPass = encryptedPassword;
+               // db.Entry(users).Property(uco => uco.AddedBy).IsModified = false;
+               // db.Entry(users).Property(uco => uco.AddedOn).IsModified = false;
                 db.Entry(users).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

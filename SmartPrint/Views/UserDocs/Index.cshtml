@@ -24,15 +24,15 @@
             @Html.DisplayNameFor(model => model.DocFileName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.gDocFilePath)
+            @Html.DisplayNameFor(model => model.DocFilePath)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.UserId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.DocCreateDate)
+            @Html.DisplayNameFor(model => model.DocCreatedDate)
         </th>
-        <th>
+        <!--<th>
             @Html.DisplayNameFor(model => model.AddedBy)
         </th>
         <th>
@@ -43,9 +43,9 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.EditedOn)
-        </th>
+        </th>-->
         <th>
-            @Html.DisplayNameFor(model => model.RowStatus)
+            @Html.DisplayNameFor(model => model.StatusId)
         </th>
         <th></th>
     </tr>
@@ -65,15 +65,15 @@
             @Html.DisplayFor(modelItem => item.DocFileName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.gDocFilePath)
+            @Html.DisplayFor(modelItem => item.DocFilePath)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.UserId)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.DocCreateDate)
+            @Html.DisplayFor(modelItem => item.DocCreatedDate)
         </td>
-        <td>
+        <!--<td>
             @Html.DisplayFor(modelItem => item.AddedBy)
         </td>
         <td>
@@ -84,9 +84,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.EditedOn)
-        </td>
+        </td>-->
         <td>
-            @Html.DisplayFor(modelItem => item.RowStatus)
+            @Html.DisplayFor(modelItem => item.StatusId)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.DocId }) |

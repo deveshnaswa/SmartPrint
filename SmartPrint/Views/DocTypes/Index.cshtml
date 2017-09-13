@@ -23,6 +23,7 @@
         <th>
             @Html.DisplayNameFor(model => model.IsActive)
         </th>
+        <!--
         <th>
             @Html.DisplayNameFor(model => model.AddedBy)
         </th>
@@ -34,9 +35,9 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.EditedOn)
-        </th>
+        </th>-->
         <th>
-            @Html.DisplayNameFor(model => model.RowStatus)
+            @Html.DisplayNameFor(model => model.StatusId)
         </th>
         <th></th>
     </tr>
@@ -55,6 +56,7 @@
         <td>
             @Html.DisplayFor(modelItem => item.IsActive)
         </td>
+        <!--
         <td>
             @Html.DisplayFor(modelItem => item.AddedBy)
         </td>
@@ -66,9 +68,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.EditedOn)
-        </td>
+        </td>-->
         <td>
-            @Html.DisplayFor(modelItem => item.RowStatus)
+            @Html.DisplayFor(modelItem => item.StatusId)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.DocTypeId }) |

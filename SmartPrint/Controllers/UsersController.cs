@@ -1,7 +1,6 @@
 ﻿using SmartPrint.CustomLibraries;
 using SmartPrint.Models;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -38,24 +37,9 @@ namespace SmartPrint.Controllers
         public ActionResult Create()
         {
             ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
-
-            ViewBag.RowStatus = new SelectList(db.RStatus, "StatusId", "StatusName");
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
             ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
-            /*var ActiveList=    new List<SelectListItem>
-            {
-                new SelectListItem
-                {
-                    Text = "No",
-                    Value = "0"
-                },
-                new SelectListItem
-                {
-                    Text = "Yes",
-                    Value = "1"
-                }
-            };
-            ViewBag.Active = new SelectList(ActiveList,"Value","Text");
-            */
+           
             return View();
         }
 
@@ -64,7 +48,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "UserId,FName,LName,UserEmail,UserPass,UserTypeId,UserCode,UserPhone,UStatusId,AddedBy,AddedOn,EditedBy,EditedOn,RowStatus")] Users users)
+        public ActionResult Create([Bind(Include = "UserId,FName,LName,UserEmail,UserPass,UserTypeId,UserCode,UserPhone,UStatusId,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] Users users)
         {
             if (ModelState.IsValid)
             {
@@ -96,23 +80,9 @@ namespace SmartPrint.Controllers
             var decryptPassword = CustomDecrypt.Decrypt(users.UserPass);
             users.UserPass = decryptPassword;
             ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType",users.UserTypeId);
-            ViewBag.RowStatus = new SelectList(db.RStatus, "StatusId", "StatusName", users.RowStatus);
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName", users.StatusId);
             ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName", users.UStatusId);
-            /*var ActiveList = new List<SelectListItem>
-            {
-                new SelectListItem
-                {
-                    Text = "No",
-                    Value = "0"
-                },
-                new SelectListItem
-                {
-                    Text = "Yes",
-                    Value = "1"
-                }
-            };
-
-            ViewBag.Active = new SelectList(ActiveList, "Value", "Text");*/
+           
             return View(users);
         }
 
@@ -121,7 +91,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UserId,FName,LName,UserEmail,UserPass,UserTypeId,UserCode,UserPhone,UStatusId,EditedBy,EditedOn,RowStatus", Exclude = "AddedBy,AddedOn")] Users users)
+        public ActionResult Edit([Bind(Include = "UserId,FName,LName,UserEmail,UserPass,UserTypeId,UserCode,UserPhone,UStatusId,EditedBy,EditedOn,StatusId", Exclude = "AddedBy,AddedOn")] Users users)
         {
             if (ModelState.IsValid)
             {
@@ -161,7 +131,7 @@ namespace SmartPrint.Controllers
             try
             {
                 Users users = db.Users.Find(id);
-                users.RowStatus = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
+                users.StatusId = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
                 db.Entry(users).State = EntityState.Modified;
                 //db.Users.Remove(users);
                 db.SaveChanges();

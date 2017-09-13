@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using SmartPrint.Models;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using SmartPrint;
-using SmartPrint.Models;
 
 namespace SmartPrint.Controllers
 {
@@ -39,6 +35,10 @@ namespace SmartPrint.Controllers
         // GET: UserTxns/Create
         public ActionResult Create()
         {
+           // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+            //ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
+
             return View();
         }
 
@@ -47,7 +47,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TxnId,UserId,TxnType,TxnAmount,TxnDateTiime,TxnBalance,TxnRefJobId,TxnStatus,AddedBy,AddedOn,EditedBy,EditedOn,RowStatus")] UserTxns userTxns)
+        public ActionResult Create([Bind(Include = "TxnId,UserId,TxnType,TxnAmount,TxnDateTime,TxnBalance,TxnRefJobId,TxnStatus,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] UserTxns userTxns)
         {
             if (ModelState.IsValid)
             {
@@ -71,6 +71,10 @@ namespace SmartPrint.Controllers
             {
                 return HttpNotFound();
             }
+            //ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName",userTxns.StatusId);
+            //ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
+
             return View(userTxns);
         }
 
@@ -79,11 +83,13 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "TxnId,UserId,TxnType,TxnAmount,TxnDateTiime,TxnBalance,TxnRefJobId,TxnStatus,AddedBy,AddedOn,EditedBy,EditedOn,RowStatus")] UserTxns userTxns)
+        public ActionResult Edit([Bind(Include = "TxnId,UserId,TxnType,TxnAmount,TxnDateTime,TxnBalance,TxnRefJobId,TxnStatus,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")] UserTxns userTxns)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(userTxns).State = EntityState.Modified;
+                db.Entry(userTxns).Property(uco => uco.AddedBy).IsModified = false;
+                db.Entry(userTxns).Property(uco => uco.AddedOn).IsModified = false;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -114,7 +120,7 @@ namespace SmartPrint.Controllers
             try
             {
                 UserTxns userTxns = db.UserTxns.Find(id);
-                userTxns.RowStatus = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
+                userTxns.StatusId = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
                 db.Entry(userTxns).State = EntityState.Modified;
                 //db.Users.Remove(users);
                 db.SaveChanges();

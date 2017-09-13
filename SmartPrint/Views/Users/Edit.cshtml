@@ -116,11 +116,11 @@
         </div>
                 -->
         <div class="form-group">
-            @Html.LabelFor(model => model.RowStatus, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.StatusId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("RowStatus", null, htmlAttributes: new { @class = "form-control" })
-                <!--@Html.EditorFor(model => model.RowStatus, new { htmlAttributes = new { @class = "form-control" } })-->
-                @Html.ValidationMessageFor(model => model.RowStatus, "", new { @class = "text-danger" })
+                @Html.DropDownList("StatusId", null, htmlAttributes: new { @class = "form-control" })
+                <!--@Html.EditorFor(model => model.StatusId, new { htmlAttributes = new { @class = "form-control" } })-->
+                @Html.ValidationMessageFor(model => model.StatusId, "", new { @class = "text-danger" })
             </div>
         </div>
 

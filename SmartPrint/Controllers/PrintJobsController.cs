@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using SmartPrint.Models;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using SmartPrint;
-using SmartPrint.Models;
 
 namespace SmartPrint.Controllers
 {
@@ -39,6 +35,9 @@ namespace SmartPrint.Controllers
         // GET: PrintJobs/Create
         public ActionResult Create()
         {
+           // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+           // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
             return View();
         }
 
@@ -47,7 +46,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "JobId,UserId,DocId,DocName,DocType,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatus,AddedBy,AddedOn,EditedBy,EditedOn,RowStatus")] PrintJobs printJobs)
+        public ActionResult Create([Bind(Include = "JobId,UserId,DocId,DocName,DocType,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatus,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] PrintJobs printJobs)
         {
             if (ModelState.IsValid)
             {
@@ -71,6 +70,9 @@ namespace SmartPrint.Controllers
             {
                 return HttpNotFound();
             }
+            //ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType", users.UserTypeId);
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName", printJobs.StatusId);
+            //ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName", users.UStatusId);
             return View(printJobs);
         }
 
@@ -79,11 +81,13 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "JobId,UserId,DocId,DocName,DocType,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatus,AddedBy,AddedOn,EditedBy,EditedOn,RowStatus")] PrintJobs printJobs)
+        public ActionResult Edit([Bind(Include = "JobId,UserId,DocId,DocName,DocType,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatus,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")] PrintJobs printJobs)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(printJobs).State = EntityState.Modified;
+                db.Entry(printJobs).Property(uco => uco.AddedBy).IsModified = false;
+                db.Entry(printJobs).Property(uco => uco.AddedOn).IsModified = false;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -114,7 +118,7 @@ namespace SmartPrint.Controllers
             try
             {
                 PrintJobs printJobs = db.PrintJobs.Find(id);
-                printJobs.RowStatus = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
+                printJobs.StatusId = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
                 db.Entry(printJobs).State = EntityState.Modified;
                 //db.Users.Remove(users);
                 db.SaveChanges();

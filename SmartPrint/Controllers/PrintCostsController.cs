@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using SmartPrint.Models;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using SmartPrint;
-using SmartPrint.Models;
 
 namespace SmartPrint.Controllers
 {
@@ -39,6 +35,9 @@ namespace SmartPrint.Controllers
         // GET: PrintCosts/Create
         public ActionResult Create()
         {
+           // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+           // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
             return View();
         }
 
@@ -47,7 +46,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "PrintCostId,Name,Width,Height,MonoCostPerPage,ColorCostPerPage,IsActive,AddedBy,AddedOn,EditedBy,EditedOn,RowStatus")] PrintCosts printCosts)
+        public ActionResult Create([Bind(Include = "PrintCostId,Name,Width,Height,MonoCostPerPage,ColorCostPerPage,IsActive,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] PrintCosts printCosts)
         {
             if (ModelState.IsValid)
             {
@@ -71,6 +70,9 @@ namespace SmartPrint.Controllers
             {
                 return HttpNotFound();
             }
+           // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType", users.UserTypeId);
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName", printCosts.StatusId);
+           // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName", users.UStatusId);
             return View(printCosts);
         }
 
@@ -79,11 +81,13 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PrintCostId,Name,Width,Height,MonoCostPerPage,ColorCostPerPage,IsActive,AddedBy,AddedOn,EditedBy,EditedOn,RowStatus")] PrintCosts printCosts)
+        public ActionResult Edit([Bind(Include = "PrintCostId,Name,Width,Height,MonoCostPerPage,ColorCostPerPage,IsActive,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")] PrintCosts printCosts)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(printCosts).State = EntityState.Modified;
+                db.Entry(printCosts).Property(uco => uco.AddedBy).IsModified = false;
+                db.Entry(printCosts).Property(uco => uco.AddedOn).IsModified = false;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -113,7 +117,7 @@ namespace SmartPrint.Controllers
             try
             {
                 PrintCosts printCosts = db.PrintCosts.Find(id);
-                printCosts.RowStatus = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
+                printCosts.StatusId = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
                 db.Entry(printCosts).State = EntityState.Modified;
                 //db.Users.Remove(users);
                 db.SaveChanges();

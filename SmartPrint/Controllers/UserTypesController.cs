@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using SmartPrint.Models;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using SmartPrint;
-using SmartPrint.Models;
 
 namespace SmartPrint.Controllers
 {
@@ -33,12 +29,14 @@ namespace SmartPrint.Controllers
             {
                 return HttpNotFound();
             }
+
             return View(userTypes);
         }
 
         // GET: UserTypes/Create
         public ActionResult Create()
         {
+            ViewBag.RowStatus = new SelectList(db.RStatus, "StatusId", "StatusName");
             return View();
         }
 
@@ -47,7 +45,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "UserTypeId,UserType,AddedBy,AddedOn,EditedBy,EditedOn,RowStatus")] UserTypes userTypes)
+        public ActionResult Create([Bind(Include = "UserTypeId,UserType,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] UserTypes userTypes)
         {
             if (ModelState.IsValid)
             {
@@ -71,6 +69,7 @@ namespace SmartPrint.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName", userTypes.StatusId);
             return View(userTypes);
         }
 
@@ -79,11 +78,13 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UserTypeId,UserType,AddedBy,AddedOn,EditedBy,EditedOn,RowStatus")] UserTypes userTypes)
+        public ActionResult Edit([Bind(Include = "UserTypeId,UserType,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")] UserTypes userTypes)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(userTypes).State = EntityState.Modified;
+                db.Entry(userTypes).Property(uco => uco.AddedBy).IsModified = false;
+                db.Entry(userTypes).Property(uco => uco.AddedOn).IsModified = false;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -114,7 +115,7 @@ namespace SmartPrint.Controllers
             try
             {
                 UserTypes userTypes = db.UserTypes.Find(id);
-                userTypes.RowStatus = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
+                userTypes.StatusId = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
                 db.Entry(userTypes).State = EntityState.Modified;
                 //db.Users.Remove(users);
                 db.SaveChanges();

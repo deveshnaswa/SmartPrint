@@ -17,11 +17,11 @@ namespace SmartPrint.Models
         public string DocType { get; set; }
         public string DocExt { get; set; }
         public string DocFileName { get; set; }
-        public string gDocFilePath { get; set; }
+        public string DocFilePath { get; set; }
         public int UserId { get; set; }
         [DataType(DataType.DateTime)]
         [Column(TypeName = "DateTime2")]
-        public DateTime DocCreateDate { get; set; }
+        public DateTime DocCreatedDate { get; set; }
         public int AddedBy { get; set; }
         [DataType(DataType.DateTime)]
         [Column(TypeName = "DateTime2")]
@@ -30,8 +30,8 @@ namespace SmartPrint.Models
         [DataType(DataType.DateTime)]
         [Column(TypeName = "DateTime2")]
         public DateTime EditedOn { get; set; }
-        public int RowStatus { get; set; }
-
-       // public virtual RecordStatus RecordStatus { get; set; }
+        public int StatusId { get; set; }
+        public virtual RStatus RStatus { get; set; }
+        // public virtual RecordStatus RecordStatus { get; set; }
     }
 }

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using SmartPrint.Models;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using SmartPrint;
-using SmartPrint.Models;
 
 namespace SmartPrint.Controllers
 {
@@ -39,6 +35,10 @@ namespace SmartPrint.Controllers
         // GET: DocTypes/Create
         public ActionResult Create()
         {
+           // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+           // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
+
             return View();
         }
 
@@ -47,7 +47,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "DocTypeId,DocType,DocExt,DocIcon,IsActive,AddedBy,AddedOn,EditedBy,EditedOn,RowStatus")] DocTypes docTypes)
+        public ActionResult Create([Bind(Include = "DocTypeId,DocType,DocExt,DocIcon,IsActive,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] DocTypes docTypes)
         {
             if (ModelState.IsValid)
             {
@@ -71,6 +71,10 @@ namespace SmartPrint.Controllers
             {
                 return HttpNotFound();
             }
+
+            //ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType", users.UserTypeId);
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName", docTypes.StatusId);
+           // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName", users.UStatusId);
             return View(docTypes);
         }
 
@@ -79,11 +83,14 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DocTypeId,DocType,DocExt,DocIcon,IsActive,AddedBy,AddedOn,EditedBy,EditedOn,RowStatus")] DocTypes docTypes)
+        public ActionResult Edit([Bind(Include = "DocTypeId,DocType,DocExt,DocIcon,IsActive,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")] DocTypes docTypes)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(docTypes).State = EntityState.Modified;
+                db.Entry(docTypes).Property(uco => uco.AddedBy).IsModified = false;
+                db.Entry(docTypes).Property(uco => uco.AddedOn).IsModified = false;
+
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -114,7 +121,7 @@ namespace SmartPrint.Controllers
             try
             {
                 DocTypes docTypes = db.DocTypes.Find(id);
-                docTypes.RowStatus = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
+                docTypes.StatusId= 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
                 db.Entry(docTypes).State = EntityState.Modified;
                 //db.Users.Remove(users);
                 db.SaveChanges();

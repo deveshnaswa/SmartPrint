@@ -21,7 +21,7 @@
             @Html.DisplayNameFor(model => model.TxnAmount)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TxnDateTiime)
+            @Html.DisplayNameFor(model => model.TxnDateTime)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.TxnBalance)
@@ -45,7 +45,7 @@
             @Html.DisplayNameFor(model => model.EditedOn)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.RowStatus)
+            @Html.DisplayNameFor(model => model.StatusId)
         </th>
         <th></th>
     </tr>
@@ -62,7 +62,7 @@
             @Html.DisplayFor(modelItem => item.TxnAmount)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TxnDateTiime)
+            @Html.DisplayFor(modelItem => item.TxnDateTime)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.TxnBalance)
@@ -86,7 +86,7 @@
             @Html.DisplayFor(modelItem => item.EditedOn)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.RowStatus)
+            @Html.DisplayFor(modelItem => item.StatusId)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.TxnId }) |

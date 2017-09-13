@@ -129,7 +129,7 @@ namespace SmartPrint.Controllers
                     user.UserPhone= model.UserPhone;
                     user.AddedOn = DateTime.Now;
                     user.EditedOn= DateTime.Now;
-                    user.RowStatus= model.RowStatus;
+                    user.StatusId= model.StatusId;
                     db.Users.Add(user);
                     db.SaveChanges();
                 }

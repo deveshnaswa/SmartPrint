@@ -10,17 +10,7 @@ namespace SmartPrint.Models
 {
     public class UserTypes : ITrackable
     {
-
-        /*
-         *   [UserTypeId] INT           IDENTITY (0, 1) NOT NULL,
-    [UserType]   NVARCHAR (50) NOT NULL,
-    [AddedBy]    INT           NOT NULL,
-    [AddedOn]    DATETIME      NULL,
-    [EditedBy]   INT           NOT NULL,
-    [EditedOn]   DATETIME      NULL,
-    [RowStatus]  INT           NOT NULL,
-    */
-
+        
         [Key]
         public int UserTypeId { get; set; }
         [Required]
@@ -33,9 +23,11 @@ namespace SmartPrint.Models
         [Column(TypeName = "DateTime2")]
         [DataType(DataType.DateTime)]
         public DateTime EditedOn { get; set; }
-        public int RowStatus { get; set; }
+        public int StatusId { get; set; }
+        public virtual RStatus RStatus { get; set; }
 
-       // public virtual RecordStatus RecordStatus { get; set; }
+
+       
 
     }
 }

@@ -125,11 +125,12 @@ namespace SmartPrint.Controllers
         {
             if (ModelState.IsValid)
             {
+                db.Entry(users).State = EntityState.Modified;
                 var encryptedPassword = CustomEnrypt.Encrypt(users.UserPass);
                 users.UserPass = encryptedPassword;
                 db.Entry(users).Property(uco => uco.AddedBy).IsModified = false;
                 db.Entry(users).Property(uco => uco.AddedOn).IsModified = false;
-                db.Entry(users).State = EntityState.Modified;
+                
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

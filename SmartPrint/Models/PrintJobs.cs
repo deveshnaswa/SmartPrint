@@ -15,7 +15,7 @@ namespace SmartPrint.Models
         public int UserId { get; set; }
         public int DocId { get; set; }
         public string DocName { get; set; }
-        public int DocType { get; set; }
+        public int DocTypeId { get; set; }
         public string DocExt { get; set; }
         public string DocFileNameOnServer { get; set; }
         public string DocFilePath { get; set; }
@@ -41,7 +41,7 @@ namespace SmartPrint.Models
         public string JobErrorRemarks { get; set; }
         public string PrinterName { get; set; }
         public string PrinterPath { get; set; }
-        public int JobStatus { get; set; }
+        public int JobStatusId { get; set; }
         public int AddedBy { get; set; }
         [DataType(DataType.DateTime)]
         [Column(TypeName = "DateTime2")]

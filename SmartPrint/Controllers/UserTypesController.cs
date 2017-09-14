@@ -36,7 +36,7 @@ namespace SmartPrint.Controllers
         // GET: UserTypes/Create
         public ActionResult Create()
         {
-            ViewBag.RowStatus = new SelectList(db.RStatus, "StatusId", "StatusName");
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
             return View();
         }
 

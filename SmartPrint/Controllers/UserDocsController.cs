@@ -47,7 +47,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "DocId,DocName,DocType,DocExt,DocFileName,DocFilePath,UserId,DocCreatedDate,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] UserDocs userDocs)
+        public ActionResult Create([Bind(Include = "DocId,DocName,DocTypeId,DocExt,DocFileName,DocFilePath,UserId,DocCreatedDate,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] UserDocs userDocs)
         {
             if (ModelState.IsValid)
             {
@@ -83,7 +83,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DocId,DocName,DocType,DocExt,DocFileName,DocFilePath,UserId,DocCreatedDate,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")] UserDocs userDocs)
+        public ActionResult Edit([Bind(Include = "DocId,DocName,DocTypeId,DocExt,DocFileName,DocFilePath,UserId,DocCreatedDate,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")] UserDocs userDocs)
         {
             if (ModelState.IsValid)
             {

@@ -12,7 +12,7 @@ namespace SmartPrint.Models
         [Key]
         public int TxnId { get; set; }
         public int UserId { get; set; }
-        public string TxnType { get; set; }
+        public int TxnTypeId { get; set; }
         public decimal TxnAmount { get; set; }
         [DataType(DataType.DateTime)]
         [Column(TypeName = "DateTime2")]

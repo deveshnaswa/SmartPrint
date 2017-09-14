@@ -47,7 +47,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TxnId,UserId,TxnType,TxnAmount,TxnDateTime,TxnBalance,TxnRefJobId,TxnStatus,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] UserTxns userTxns)
+        public ActionResult Create([Bind(Include = "TxnId,UserId,TxnTypeId,TxnAmount,TxnDateTime,TxnBalance,TxnRefJobId,TxnStatus,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] UserTxns userTxns)
         {
             if (ModelState.IsValid)
             {
@@ -83,7 +83,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "TxnId,UserId,TxnType,TxnAmount,TxnDateTime,TxnBalance,TxnRefJobId,TxnStatus,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")] UserTxns userTxns)
+        public ActionResult Edit([Bind(Include = "TxnId,UserId,TxnTypeId,TxnAmount,TxnDateTime,TxnBalance,TxnRefJobId,TxnStatus,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")] UserTxns userTxns)
         {
             if (ModelState.IsValid)
             {

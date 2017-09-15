@@ -89,6 +89,7 @@
             @Html.DisplayFor(modelItem => item.StatusId)
         </td>
         <td>
+            @Html.ActionLink("Print Job", "Create", "PrintJobs", new { id = item.DocId }, null) |
             @Html.ActionLink("Edit", "Edit", new { id=item.DocId }) |
             @Html.ActionLink("Details", "Details", new { id=item.DocId }) |
             @Html.ActionLink("Delete", "Delete", new { id=item.DocId })

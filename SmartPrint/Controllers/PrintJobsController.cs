@@ -4,6 +4,10 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using System.Management;
+using System.Security.Claims;
+using Microsoft.AspNet.Identity;
+using SmartPrint.CustomLibaries;
 
 namespace SmartPrint.Controllers
 {
@@ -33,12 +37,60 @@ namespace SmartPrint.Controllers
         }
 
         // GET: PrintJobs/Create
-        public ActionResult Create()
+        public ActionResult Create(int? id)
         {
-           // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
+            PrintJobs model = new PrintJobs();
+
+            UserDocs userDocsToPrint = db.UserDocs.Find(id);
+
+            //ViewBag.UserDocsToPrint = userDocsToPrint;
+            //model.JobId = userDocsToPrint
+            model.UserId = int.Parse(User.Identity.GetUserId());
+            model.DocId = userDocsToPrint.DocId;
+            model.DocName = userDocsToPrint.DocName;
+            model.DocTypeId = userDocsToPrint.DocTypeId;
+            model.DocExt = userDocsToPrint.DocExt;
+            model.DocFileNameOnServer =userDocsToPrint.DocFileName;
+            model.DocFilePath = userDocsToPrint.DocFilePath;
+            /*model.DocTotalPages = "";
+            model.PrintCostId = "";
+            model.MonoPages = "";
+            model.ColorPages = "";
+            model.IsColor = "";
+            model.IsDuplex = "";
+            model.IsCollate = "";
+            model.UnitCost = "";
+            model.MonoUnitCost = "";
+            model.ColorUnitCost = "";
+            model.UnitItem = "";
+            model.JobRemarks = "";
+            model.PagesFrom = "";
+            model.PagesTo = "";
+            model.NumCopies = "";
+            model.TotalPageCount = "";
+            model.TotalPageCost = "";
+            model.CreditUsed = "";
+            model.JobError = "";
+            model.JobErrorRemarks = "";
+            model.PrinterName = "";
+            model.PrinterPath = "";
+            model.JobStatusId = "";
+            model.AddedBy = "";
+            model.AddedOn = "";
+            model.EditedBy = "";
+            model.EditedOn = "";
+            model.StatusId = "";
+            */
+
+
+            ViewBag.PrinterName = new SelectList(Printer.GetPrinterList(),"Value","Text");
+            
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+                
+            // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
             ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
            // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
-            return View();
+            return View(model);
         }
 
         // POST: PrintJobs/Create

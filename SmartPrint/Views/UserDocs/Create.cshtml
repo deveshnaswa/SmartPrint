@@ -6,7 +6,7 @@
 
 <h2>Create</h2>
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm("Create","UserDocs",FormMethod.Post,new {enctype="multipart/form-data"} )) 
 {
     @Html.AntiForgeryToken()
     
@@ -25,11 +25,19 @@
         <div class="form-group">
             @Html.LabelFor(model => model.DocTypeId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.DocTypeId, new { htmlAttributes = new { @class = "form-control" } })
+                <!--@Html.EditorFor(model => model.DocTypeId, new { htmlAttributes = new { @class = "form-control" } })-->
+                @Html.DropDownList("DocTypeId", null, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.DocTypeId, "", new { @class = "text-danger" })
+                <!--<script>
+                    $(document).ready(function() {
+                        $("#DocTypeId").change(function() {
+                            var d = $("#DocTypeId Options:Selected").value();
+                        })
+                    });
+-                </script>-->
             </div>
         </div>
-
+        <!--
         <div class="form-group">
             @Html.LabelFor(model => model.DocExt, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -45,15 +53,16 @@
                 @Html.ValidationMessageFor(model => model.DocFileName, "", new { @class = "text-danger" })
             </div>
         </div>
-
+        -->
         <div class="form-group">
             @Html.LabelFor(model => model.DocFilePath, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.DocFilePath, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DocFilePath, "", new { @class = "text-danger" })
+                <input type="file" name="file" id="file" /><br/>
+                <!--@Html.EditorFor(model => model.DocFilePath, new {htmlAttributes = new {@class = "form-control"}})
+                @Html.ValidationMessageFor(model => model.DocFilePath, "", new {@class = "text-danger"})-->
             </div>
         </div>
-
+        <!--
         <div class="form-group">
             @Html.LabelFor(model => model.UserId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -68,7 +77,7 @@
                 @Html.EditorFor(model => model.DocCreatedDate, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.DocCreatedDate, "", new { @class = "text-danger" })
             </div>
-        </div>
+        </div>-->
         <!--
         <div class="form-group">
             @Html.LabelFor(model => model.AddedBy, htmlAttributes: new { @class = "control-label col-md-2" })

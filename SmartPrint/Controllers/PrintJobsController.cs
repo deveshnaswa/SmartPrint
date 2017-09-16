@@ -39,6 +39,7 @@ namespace SmartPrint.Controllers
         // GET: PrintJobs/Create
         public ActionResult Create(int? id)
         {
+
             PrintJobs model = new PrintJobs();
 
             UserDocs userDocsToPrint = db.UserDocs.Find(id);
@@ -86,7 +87,9 @@ namespace SmartPrint.Controllers
             ViewBag.PrinterName = new SelectList(Printer.GetPrinterList(),"Value","Text");
             
             ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
-                
+
+            ViewBag.PrintCostId= new SelectList(db.PrintCosts, "PrintCostId", "Name");
+
             // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
             ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
            // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
@@ -187,6 +190,12 @@ namespace SmartPrint.Controllers
            
         }
 
+        public ActionResult GetPrintCosts(int PrintCostId)
+        {
+            var printCost = db.PrintCosts.Where(c => c.PrintCostId== PrintCostId);
+            
+            return Json(printCost, JsonRequestBehavior.AllowGet);
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

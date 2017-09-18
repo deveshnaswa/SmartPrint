@@ -1,0 +1,117 @@
+﻿
+@using GdPicture14.WEB
+@using GdPicture14
+@using SmartPrint.Models
+@{
+    Layout = null;
+    Document document = null;
+    if (ViewBag.Document != null)
+    {
+        // When a document is sent by the controller, we convert it to a proper Document object
+        document = ViewBag.Document as Document;
+    }
+}
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>DocuVieware Lite - Gallery</title>
+    <meta name="description" content="This document gallery has been created with DocuVieware Lite free HTML5 document viewer for ASP.NET. DocuVieware Lite supports more than 100 file formats." />
+    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <!-- We need jQuery to be loaded first -->
+    <script src="~/Content/jquery-1.12.4.min.js"></script>
+    <!-- Then the DocuVieware JS & CSS resources -->
+    <script src="~/Content/docuvieware-min.js"></script>
+    <link href="~/Content/docuvieware-min.css" rel="stylesheet" type="text/css" />
+    <!-- Project own CSS -->
+    <link href="~/Content/style.css" rel="stylesheet" type="text/css" />
+</head>
+<form id="form1" method="post" action="/">
+    <!-- This hidden field that contains the id of the document that has been clicked -->
+    <input name="id" type="hidden" value="" id="id" />
+    <!-- This hidden field will hold the scrollbar position -->
+    <input name="hdnScrollPos" type="hidden" value="" id="hdnScrollPos" />
+    <!-- Left side div that contains the document list -->
+    <div id="gallery_container">
+        <!-- Header with SVG icon -->
+        <div id="gallery_icon_container">
+            <div id="gallery_icon">
+                <svg height="100%" width="100%" viewBox="0 0 512 512">
+                    <path d="M382.5,139.5v-70h-62v-69h-261v372h62v70h70v70h261v-373H382.5z M81.5,350.5v-328h216v328H81.5z M144.5,420.5v-48h176v-280 h40v328H144.5z M430.5,489.5h-216v-47h168v-281h48V489.5z" />
+                    <rect x="104.5" y="194.5" width="168" height="23" />
+                    <rect x="103.5" y="243.5" width="168" height="23" />
+                    <rect x="104.5" y="292.5" width="84" height="23" />
+                    <path d="M104.5,50.5v117h168v-117H104.5z M250.5,146.5h-123v-73h123V146.5z" />
+                </svg>
+            </div>
+            <span id="gallery_header_title">Document Gallery</span>
+        </div>
+        <!-- This panel will receive each document item div at render time -->
+        
+        <div id="gallery_panel_content">
+            @{/*
+                // Iteration through the received document library
+                string[] library = ViewBag.Library as string[];
+                for (int i = 0; i < library.Length; i++)
+                {
+                    // If this is the document that is to be displayed, we want to apply the .item-selected style
+                    // Note the onclick event: we call our JavaScript function to set the document id and submit the form
+                    bool selectedItem = (document != null) && (document.GetName() == library[i]);
+                    <div onclick="displayDocument(@i);" class=@(selectedItem ? "item-selected" : "item-regular")>
+                        <div style="margin-bottom: 10px; cursor: pointer;">
+                            <img src="/Content/document-icon.png" alt="@library[i]" />
+                        </div>
+                        <div style="height: 30px; cursor: pointer;">
+                            @library[i]
+                        </div>
+                    </div>
+                }
+            */}
+        </div>
+        -->
+    </div>
+    <!--
+    The div on the right side contains the DocuVieware Lite integration. It is configured to fill all the space available within the div.
+    When the view is rendered, the document held by the ViewBag (if exists, i.e. after a form post) is loaded within DocuVieware Lite.
+    -->
+    <div id="viewer_container">
+        @{
+            DocuVieware docuVieware = new DocuVieware
+            {
+                ID = "DocuVieware1",
+                // CacheFolder = MvcApplication.GetCacheDirectory(),
+                Height = new System.Web.UI.WebControls.Unit("100%"),
+                Width = new System.Web.UI.WebControls.Unit("100%")
+            };
+            if (document != null) // When a document is sent from controller, we want to display it
+            {
+                GdPictureStatus status = docuVieware.LoadFromStream(new FileStream(document.GetPath(), FileMode.Open, FileAccess.Read), true, document.GetName());
+                if (status != GdPictureStatus.OK) // If LoadFromStream failed, we want to display the error status
+                {
+                    <script>
+                            // setTimeout allows the page to keep loading even with the alert so the UI isn't frozen until user clicks OK
+                            setTimeout(function () { alert("An error occured: @status"); }, 1);
+                    </script>
+                }
+            }
+            docuVieware.RenderControl(Output);
+        }
+    </div>
+</form>
+<script>
+        // This function stores the vertical scrollbar position when the library is scrolled
+        $("#gallery_panel_content").scroll(function () {
+            $("#hdnScrollPos").val($("#gallery_panel_content").scrollTop());
+        });
+        $(document).ready(function () {
+            // This is to restore the vertical scrollbar position after the form post
+            $("#gallery_panel_content").scrollTop(@ViewBag.ScrollPos);
+            // Default visibily for gallery_panel_content is hidden to avoid scrolling flicker
+            $("#gallery_panel_content").css("visibility", "visible");
+        });
+        // This function uses jQuery to set the proper index to the hidden field, make sure the scrollbar position is a number and post the form
+        function displayDocument(index) {
+            $("#id").val(index);
+            $("#hdnScrollPos").val(parseInt($("#hdnScrollPos").val()) || 0);
+            $("#form1").submit();
+        }
+</script>

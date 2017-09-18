@@ -1,0 +1,54 @@
+﻿
+@using GdPicture14.WEB
+@using GdPicture14
+@using SmartPrint.Models
+@{
+    Layout = null;
+    Document document = null;
+    if (ViewBag.Document != null)
+    {
+        // When a document is sent by the controller, we convert it to a proper Document object
+        document = ViewBag.Document as Document;
+    }
+}
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>DocuVieware Lite - Gallery</title>
+    <meta name="description" content="This document gallery has been created with DocuVieware Lite free HTML5 document viewer for ASP.NET. DocuVieware Lite supports more than 100 file formats." />
+    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <!-- We need jQuery to be loaded first -->
+    <script src="~/Scripts/jquery-1.12.4.min.js"></script>
+    <!-- Then the DocuVieware JS & CSS resources -->
+    <script src="~/Scripts/docuvieware-min.js"></script>
+    <link href="~/Content/docuvieware-min.css" rel="stylesheet" type="text/css" />
+    <!-- Project own CSS -->
+    <link href="~/Content/style.css" rel="stylesheet" type="text/css" />
+</head>
+<!--
+The div on the right side contains the DocuVieware Lite integration. It is configured to fill all the space available within the div.
+When the view is rendered, the document held by the ViewBag (if exists, i.e. after a form post) is loaded within DocuVieware Lite.
+-->
+<div id="viewer_container">
+    @{
+        DocuVieware docuVieware = new DocuVieware
+        {
+            ID = "DocuVieware1",
+            // CacheFolder = MvcApplication.GetCacheDirectory(),
+            Height = new System.Web.UI.WebControls.Unit("100%"),
+            Width = new System.Web.UI.WebControls.Unit("100%")
+        };
+        if (document != null) // When a document is sent from controller, we want to display it
+        {
+            GdPictureStatus status = docuVieware.LoadFromStream(new FileStream(document.GetPath(), FileMode.Open, FileAccess.Read), true, document.GetName());
+            if (status != GdPictureStatus.OK) // If LoadFromStream failed, we want to display the error status
+            {
+                <script>
+                    // setTimeout allows the page to keep loading even with the alert so the UI isn't frozen until user clicks OK
+                    setTimeout(function () { alert("An error occured: @status"); }, 1);
+                </script>
+            }
+        }
+        docuVieware.RenderControl(Output);
+    }
+</div>

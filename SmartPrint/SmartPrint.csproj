@@ -236,6 +236,7 @@
     <Content Include="Views\PrintJobs\Index.cshtml" />
     <Content Include="Views\Document\DocumentPreview.cshtml" />
     <Content Include="Views\Document\Index.cshtml" />
+    <Content Include="UserFileUploads\angularjs_tutorial.pdf" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -246,7 +247,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Cache\" />
-    <Folder Include="UserFileUploads\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

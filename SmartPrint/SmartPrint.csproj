@@ -137,6 +137,7 @@
     <Content Include="Content\docuvieware-min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\style.css" />
+    <Content Include="db\smartprint.sql" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\bootstrap.js" />
@@ -245,7 +246,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Cache\" />
-    <Folder Include="db\" />
     <Folder Include="UserFileUploads\" />
   </ItemGroup>
   <PropertyGroup>

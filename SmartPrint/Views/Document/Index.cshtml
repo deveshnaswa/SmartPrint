@@ -15,7 +15,8 @@
         //string extn= document.GetName().Split(',')[1].ToString();
         // System.Net.Mime.ContentType contentType;
         //string contentType;
-        string path = Server.MapPath("UserFileUploads/" + document.GetName());
+        //string path = Server.MapPath("" + document.GetName());
+        string path = document.GetPath();
 
         WebClient client = new WebClient();
         Byte[] buffer = client.DownloadData(path);

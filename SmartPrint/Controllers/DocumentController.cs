@@ -42,16 +42,16 @@ namespace SmartPrint.Controllers
         /// within the library will not impact the list of documents displayed within the view.
         /// </summary>
         // GET: Default// GET: Document
-        public ActionResult Index(int ? UserDocId)
+        public ActionResult Index(int ? id)
         {
            
 
-            if (UserDocId == null)
+            if (id== null)
             {
                // return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                UserDocId = 2;
+                //UserDocId = 2;
             }
-            UserDocs userDocs= db.UserDocs.Find(UserDocId);
+            UserDocs userDocs= db.UserDocs.Find(id);
             //PopulateLibrary();
             ViewBag.Library = _documents;
             if (userDocs != null)

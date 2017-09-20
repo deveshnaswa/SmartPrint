@@ -4,7 +4,6 @@ using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Routing;
-using GdPicture14.WEB;
 
 namespace SmartPrint
 {
@@ -19,9 +18,9 @@ namespace SmartPrint
 
 
             //For document viewer
-            DocuViewareManager.SetupConfiguration();
+          //  DocuViewareManager.SetupConfiguration();
             //025e99458a3c490ea0609e65f0b4f240bf35d80ee1283deeGx4ZcGz7zE8pzwYyLtCWhhqcW/TElpE8vdNooePcDI5/eFimqlbgw4626xZ5akP8
-            DocuViewareLicensing.RegisterKEY("025e99458a3c490ea0609e65f0b4f240bf35d80ee1283deeGx4ZcGz7zE8pzwYyLtCWhhqcW/TElpE8vdNooePcDI5/eFimqlbgw4626xZ5akP8"); 
+            //DocuViewareLicensing.RegisterKEY("025e99458a3c490ea0609e65f0b4f240bf35d80ee1283deeGx4ZcGz7zE8pzwYyLtCWhhqcW/TElpE8vdNooePcDI5/eFimqlbgw4626xZ5akP8"); 
             // Please enter your license key. Claim your free DocuVieware Lite license key here: http://www.docuvieware.com/docuvieware-lite/
         }
 

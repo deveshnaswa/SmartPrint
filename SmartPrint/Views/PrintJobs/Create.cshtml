@@ -399,11 +399,15 @@
 
 
         ViewBag.UserDocId = userdoc;
-  
+        var fileSrc = "../../UserFileUploads/" + document.GetName();
+        string mineMap = MimeMapping.GetMimeMapping(document.GetName());
+
     }
 
            
-    <iframe style="width:815px; height:550px;" id="FileReload" src="@Url.Action("Index", "Document",new { id= userdoc })"></iframe>
+    <iframe style="width:615px; height:450px;" id="FileReload" src="@(fileSrc)" type="Content-Disposition: inline; @(mineMap)" >></iframe>
+    
+    <embed src="@(fileSrc)" type="@(mineMap)">
 
 </div>
 </div>

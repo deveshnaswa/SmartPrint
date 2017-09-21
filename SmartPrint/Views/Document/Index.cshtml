@@ -24,9 +24,13 @@
         if (buffer != null)
         {
 
-            Response.ContentType = mineMap; //"application/pdf";
-            Response.AddHeader("content-length", buffer.Length.ToString());
-            Response.BinaryWrite(buffer);
+           // Response.ContentType = mineMap; //"application/pdf";
+            //Response.AddHeader("Content-Disposition", "inline");
+
+
+            //Response.AddHeader("content-length", buffer.Length.ToString());
+
+            //Response.BinaryWrite(buffer);
         }
     }
          

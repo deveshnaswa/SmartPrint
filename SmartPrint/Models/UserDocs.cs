@@ -18,14 +18,18 @@ namespace SmartPrint.Models
         public string DocName { get; set; }
         [DisplayName("Document Type")]
         public int DocTypeId { get; set; }
+
+        public virtual DocTypes DocTypes { get; set; }
         [DisplayName("Extension Type")]
         public string DocExt { get; set; }
         [DisplayName("Document File Name")]
         public string DocFileName { get; set; }
         [DisplayName("Document File Path")]
         public string DocFilePath { get; set; }
-        [DisplayName("Document User Id")]
+        [DisplayName("Document Owner")]
         public int UserId { get; set; }
+
+        public virtual Users Users { get; set; }
         [DisplayName("Uploaded Date Time")]
         [DataType(DataType.DateTime)]
         [Column(TypeName = "DateTime2")]

@@ -203,6 +203,12 @@ namespace SmartPrint.Controllers
             
             return Json(printCost, JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult GetPrinterProperties(string PrinterSelected)
+        {
+            var printerprops = Printer.GetPrinterPropertiesList(PrinterSelected);
+            return   Json(printerprops, JsonRequestBehavior.AllowGet);
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

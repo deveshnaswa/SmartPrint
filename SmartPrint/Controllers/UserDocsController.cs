@@ -17,6 +17,10 @@ namespace SmartPrint.Controllers
         // GET: UserDocs
         public ActionResult Index()
         {
+
+            ViewBag.DocTypeId = new SelectList(db.DocTypes, "DocTypeId", "DocType");
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+            ViewBag.UserId = new SelectList(db.Users, "UserId", "UserId");
             return View(db.UserDocs.ToList());
         }
         /*
@@ -67,6 +71,7 @@ namespace SmartPrint.Controllers
         {
             ViewBag.DocTypeId = new SelectList(db.DocTypes, "DocTypeId", "DocType");
             ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+            ViewBag.UserId = new SelectList(db.Users,"UserId","FName"+ " " +"LName");
            // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
 
             return View();

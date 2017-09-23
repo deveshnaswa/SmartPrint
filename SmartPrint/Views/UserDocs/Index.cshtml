@@ -20,12 +20,13 @@
         <th>
             @Html.DisplayNameFor(model => model.DocExt)
         </th>
-        <th>
+        <!--<th>
             @Html.DisplayNameFor(model => model.DocFileName)
         </th>
+        
         <th>
             @Html.DisplayNameFor(model => model.DocFilePath)
-        </th>
+        </th>-->
         <th>
             @Html.DisplayNameFor(model => model.UserId)
         </th>
@@ -56,19 +57,19 @@
             @Html.DisplayFor(modelItem => item.DocName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.DocTypeId)
+            @Html.DisplayFor(modelItem => item.DocTypes.DocType)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.DocExt)
         </td>
-        <td>
+         <!--<td>
             @Html.DisplayFor(modelItem => item.DocFileName)
         </td>
-        <td>
+       <td>
             @Html.DisplayFor(modelItem => item.DocFilePath)
-        </td>
+        </td>-->
         <td>
-            @Html.DisplayFor(modelItem => item.UserId)
+            @Html.DisplayFor(modelItem => item.Users.FName)  @Html.DisplayFor(modelItem => item.Users.LName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.DocCreatedDate)
@@ -86,7 +87,7 @@
             @Html.DisplayFor(modelItem => item.EditedOn)
         </td>-->
         <td>
-            @Html.DisplayFor(modelItem => item.StatusId)
+            @Html.DisplayFor(modelItem => item.RStatus.StatusName)
         </td>
         <td>
             @Html.ActionLink("Print Job", "Create", "PrintJobs", new { id = item.DocId }, null) |

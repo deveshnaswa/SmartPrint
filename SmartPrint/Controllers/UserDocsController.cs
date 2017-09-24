@@ -86,6 +86,7 @@ namespace SmartPrint.Controllers
         {
 
             /*
+             * 
             if (ModelState.IsValid)
             {
                 var allowedExtensions = new[] { ".pdf", ".zip", ".rar" };

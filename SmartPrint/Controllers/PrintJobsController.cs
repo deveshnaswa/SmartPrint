@@ -103,20 +103,146 @@ namespace SmartPrint.Controllers
             return View(model);
         }
 
+
+
+
+
+
+
         // POST: PrintJobs/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "JobId,UserId,DocId,DocName,DocTypeId,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatusId,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] PrintJobs printJobs)
+        //public ActionResult Create([Bind(Include = "JobId,UserId,DocId,DocName,DocTypeId,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatusId,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] PrintJobs printJobs)
+        public ActionResult Create(PrintJobs printJobs)
         {
+
+
+            UserTxns userTransaction = new UserTxns();
+            // get transaction balance of the user for checking credit score
+            decimal jTxnBalance = 0;
+            // get user info
+            int jPageFrom,jPageTo,jCopiesToPrint,jTotalPageToPrint ;
+            decimal jMonoColorCostPerPage ,jcolorcostperpage, jPrintingCostTotal;
+
+            // get printing job info as set up by user
+            bool jColorprint, jDuplexPrint = false;
+
+            var result = db.UserTxns
+                .Where(tx => tx.UserId== printJobs.UserId)   // Filter
+                .OrderByDescending(tx => tx.TxnId) // prioritet is still here - order by it
+                .FirstOrDefault();  // Now grab the transaction balance
+            
+            if (result != null)
+            {
+                jTxnBalance = result.TxnBalance;
+            }
+            
+            if (jTxnBalance > 0)
+            {
+                /// make calculations based on the data received
+                /// throw error if any 
+
+                // get user info
+                 jPageFrom = printJobs.PagesFrom;
+                 jPageTo = printJobs.PagesTo;
+                 jCopiesToPrint = printJobs.NumCopies;
+                 jTotalPageToPrint = (jPageTo - jPageFrom + 1) * jCopiesToPrint;
+
+                 jPrintingCostTotal = 0;
+
+                // get printing cost info
+                PrintCosts printCost = db.PrintCosts.Find(printJobs.PrintcostId);
+                 jMonoColorCostPerPage = printCost.MonoCostPerPage;
+                 jcolorcostperpage = printCost.ColorCostPerPage;
+
+                // get printing job info as set up by user
+                 jColorprint = printJobs.IsColor;
+                if (jColorprint)
+                {
+
+                    jPrintingCostTotal = jTotalPageToPrint * jcolorcostperpage;
+                }
+                else
+                {
+                    jPrintingCostTotal = jTotalPageToPrint * jMonoColorCostPerPage;
+                }
+
+                 jDuplexPrint = printJobs.IsDuplex;
+
+                ///TODO 
+                /// ADD LOGIC FOR DUPLEX PRINTING
+
+                printJobs.TotalPageCount = jTotalPageToPrint;
+                printJobs.TotalPageCost = jPrintingCostTotal;
+                printJobs.CreditUsed = jPrintingCostTotal;
+                    
+
+                
+
+                if (jTxnBalance >= jPrintingCostTotal)
+                {
+
+                    //return success
+                    //update database for printjob tabale.
+                    // update user transaction table.
+                    userTransaction.UserId = printJobs.UserId;
+                    userTransaction.TxnTypeId = 1;
+                    userTransaction.TxnAmount = jPrintingCostTotal;
+                    userTransaction.TxnDateTime = DateTime.Now;
+                    userTransaction.TxnBalance = jTxnBalance - jPrintingCostTotal;
+                    //userTransaction.TxnRefJobId = jPrintJobRefId;
+                    userTransaction.TxnStatus = 0;
+                    userTransaction.StatusId = 1;
+
+                    //send document to print ->job
+
+                }
+                else
+                {
+                    // return you do not have enough credits.
+                    ModelState.AddModelError("Credits Insufficient","Your credit balance is very less");
+                }
+                //UserDocs userDocs = db.UserDocs.Find(id);
+
+            }
+            else
+            {
+                ModelState.AddModelError("Credits Insufficient", "Your credit balance is very less");
+            }
+
+            
+
             if (ModelState.IsValid)
             {
+                //insert printjobs
                 db.PrintJobs.Add(printJobs);
+                db.SaveChanges();
+                var refprintjobid = printJobs.JobId;
+                userTransaction.TxnRefJobId = refprintjobid;
+                //// insert user transaction table
+                db.UserTxns.Add(userTransaction);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            else
+            {
+            
 
+            ViewBag.PrinterName = new SelectList(Printer.GetPrinterList(),"Value","Text");
+            
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+
+            ViewBag.PrintCostId= new SelectList(db.PrintCosts, "PrintCostId", "Name");
+            
+            // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
+            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+            // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
+
+           
+            }
+            
             return View(printJobs);
         }
 
@@ -197,6 +323,8 @@ namespace SmartPrint.Controllers
            
         }
 
+
+
         public ActionResult GetPrintCosts(int PrintCostId)
         {
             var printCost = db.PrintCosts.Where(c => c.PrintCostId== PrintCostId);
@@ -204,11 +332,17 @@ namespace SmartPrint.Controllers
             return Json(printCost, JsonRequestBehavior.AllowGet);
         }
 
+
+
         public ActionResult GetPrinterProperties(string PrinterSelected)
         {
             var printerprops = Printer.GetPrinterPropertiesList(PrinterSelected);
-            return   Json(printerprops, JsonRequestBehavior.AllowGet);
+            var printerQueuesdJobs = Printer.GetPrintJobsCollection(PrinterSelected);
+
+            return Json(printerprops, JsonRequestBehavior.AllowGet);
         }
+
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -217,7 +351,6 @@ namespace SmartPrint.Controllers
             }
             base.Dispose(disposing);
         }
-
 
 
 

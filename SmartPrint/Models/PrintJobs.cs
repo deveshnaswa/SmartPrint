@@ -18,7 +18,7 @@ namespace SmartPrint.Models
         public int UserId { get; set; }
         public int DocId { get; set; }
 
-        [DisplayName("Document Type")]
+        [DisplayName("Document Name")]
         public string DocName { get; set; }
         public int DocTypeId { get; set; }
         public string DocExt { get; set; }

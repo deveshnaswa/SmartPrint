@@ -5,11 +5,6 @@
     ViewBag.Title = "Create";
     var userdoc = ViewBag.UserDocsId;
     
-/*
-}
-
-@{
-    Layout = null;*/
     Document document = null;
     if (ViewBag.Document != null)
     {
@@ -232,6 +227,14 @@
     @Html.HiddenFor(model => model.MonoPages)
     @Html.HiddenFor(model => model.ColorPages)
     @Html.HiddenFor(model => model.PrinterPath)
+    @Html.HiddenFor(model => model.PrintJobQueueRefId)
+    @Html.HiddenFor(model => model.UnitItem)
+    @Html.HiddenFor(model => model.CreditUsed)
+    @Html.HiddenFor(model => model.TotalPageCount)
+    @Html.HiddenFor(model => model.TotalPageCost)
+    @Html.HiddenFor(model => model.JobError)
+    @Html.HiddenFor(model => model.JobErrorRemarks)
+    @Html.HiddenFor(model => model.PrinterPath)
     @Html.HiddenFor(model => model.JobStatusId)
     @Html.HiddenFor(model => model.StatusId)
 
@@ -302,22 +305,22 @@
             @Html.ValidationMessageFor(model => model.IsDuplex, "", new { @class = "text-danger" })
         </div>
     </div>
-        <!--
-    <div class="form-group">
+        
+    @*<div class="form-group">
         @Html.LabelFor(model => model.IsCollate, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.CheckBoxFor(model => model.IsCollate, new { htmlAttributes = new { @class = "form-control"} })
             @Html.ValidationMessageFor(model => model.IsCollate, "", new { @class = "text-danger" })
         </div>
     </div>
-        -->
+        
     <div class="form-group">
         @Html.LabelFor(model => model.UnitItem, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.UnitItem, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.UnitItem, "", new { @class = "text-danger" })
         </div>
-    </div>
+    </div>*@
 
     <div class="form-group">
         @Html.LabelFor(model => model.JobRemarks, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -327,7 +330,7 @@
         </div>
     </div>
 
-    <div class="form-group">
+    @*<div class="form-group">
         @Html.LabelFor(model => model.TotalPageCount, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.TotalPageCount, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
@@ -349,40 +352,47 @@
             @Html.EditorFor(model => model.CreditUsed, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
             @Html.ValidationMessageFor(model => model.CreditUsed, "", new { @class = "text-danger" })
         </div>
-    </div>
+    </div>*@
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.JobError, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.JobError, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-            @Html.ValidationMessageFor(model => model.JobError, "", new { @class = "text-danger" })
+    @*<div class="form-group">
+            @Html.LabelFor(model => model.PrintJobQueueRefId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PrintJobQueueRefId, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                @Html.ValidationMessageFor(model => model.PrintJobQueueRefId, "", new { @class = "text-danger" })
+            </div>
         </div>
-    </div>
+    <div class="form-group">
+            @Html.LabelFor(model => model.JobError, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.JobError, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                @Html.ValidationMessageFor(model => model.JobError, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.JobErrorRemarks, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.JobErrorRemarks, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-            @Html.ValidationMessageFor(model => model.JobErrorRemarks, "", new { @class = "text-danger" })
-        </div>
-    </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.JobErrorRemarks, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.JobErrorRemarks, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                @Html.ValidationMessageFor(model => model.JobErrorRemarks, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
 
    
-    <div class="form-group">
+    @*<div class="form-group">
         @Html.LabelFor(model => model.PrinterPath, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.PrinterPath, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
             @Html.ValidationMessageFor(model => model.PrinterPath, "", new { @class = "text-danger" })
         </div>
-    </div>
+    </div>*@
 
-    <div class="form-group">
+    @*<div class="form-group">
         @Html.LabelFor(model => model.JobStatusId, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.JobStatusId, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.JobStatusId, "", new { @class = "text-danger" })
         </div>
-    </div>
+    </div>*@
     <!--
     <div class="form-group">
         @Html.LabelFor(model => model.AddedBy, htmlAttributes: new {@class = "control-label col-md-2"})

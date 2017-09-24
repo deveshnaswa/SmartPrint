@@ -206,11 +206,13 @@ namespace SmartPrint.CustomLibaries
         }
 
 
-        public static StringCollection GetPrintJobsCollection(string printerName)
+        public static StringCollection GetPrintJobsCollection(string printerName, int JobRefId, string fileName,int PrintJobId)
         {
             StringCollection printJobCollection = new StringCollection();
-            string searchQuery = "SELECT * FROM Win32_PrintJob";
+            // string searchQuery = "SELECT * FROM Win32_PrintJob";
+            string searchQuery = "SELECT JobStatus,Name FROM Win32_PrintJob WHERE JobId='" + JobRefId + "' and Document = '" + fileName + "'";
 
+            //string searchQuery = "SELECT * FROM Win32_PrintJob WHERE jobid=7";
             /*searchQuery can also be mentioned with where Attribute,
                 but this is not working in Windows 2000 / ME / 98 machines 
                 and throws Invalid query error*/
@@ -219,16 +221,18 @@ namespace SmartPrint.CustomLibaries
             ManagementObjectCollection prntJobCollection = searchPrintJobs.Get();
             foreach (ManagementObject prntJob in prntJobCollection)
             {
-                System.String jobName = prntJob.Properties["Name"].Value.ToString();
+               // System.String jobName = prntJob.Properties["JobStatus"].Value.ToString();
+                System.String PrinterName= prntJob.Properties["Name"].Value.ToString();
 
                 //Job name would be of the format [Printer name], [Job ID]
                 char[] splitArr = new char[1];
                 splitArr[0] = Convert.ToChar(",");
-                string prnterName = jobName.Split(splitArr)[0];
-                string documentName = prntJob.Properties["Document"].Value.ToString();
+                string prnterName = PrinterName.Split(splitArr)[0];
+                //string documentName = prntJob.Properties["Document"].Value.ToString();
                 if (String.Compare(prnterName, printerName, true) == 0)
                 {
-                    printJobCollection.Add(documentName);
+                    System.String jobName = prntJob.Properties["JobStatus"].Value.ToString();
+                    printJobCollection.Add(jobName);
                 }
             }
             return printJobCollection;

@@ -161,6 +161,7 @@
     <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\GitController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MonitorPrintJobsController.cs" />
     <Compile Include="Controllers\PrintCostsController.cs" />
     <Compile Include="Controllers\PrintJobsController.cs" />
     <Compile Include="Controllers\UserDocsController.cs" />
@@ -249,6 +250,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Cache\" />
     <Folder Include="Views\Git\" />
+    <Folder Include="Views\MonitorPrintJobs\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

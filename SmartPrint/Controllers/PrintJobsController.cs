@@ -103,18 +103,13 @@ namespace SmartPrint.Controllers
             return View(model);
         }
 
-
-
-
-
-
-
+        
         // POST: PrintJobs/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //public ActionResult Create([Bind(Include = "JobId,UserId,DocId,DocName,DocTypeId,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatusId,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] PrintJobs printJobs)
+        //public ActionResult Create([Bind(Include = "JobId,UserId,DocId,DocName,DocTypeId,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PrintJobQueueRefId,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatusId,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] PrintJobs printJobs)
         public ActionResult Create(PrintJobs printJobs)
         {
 
@@ -176,6 +171,7 @@ namespace SmartPrint.Controllers
 
                 printJobs.TotalPageCount = jTotalPageToPrint;
                 printJobs.TotalPageCost = jPrintingCostTotal;
+                
                 printJobs.CreditUsed = jPrintingCostTotal;
                     
 
@@ -269,7 +265,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "JobId,UserId,DocId,DocName,DocTypeId,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatusId,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")] PrintJobs printJobs)
+        public ActionResult Edit([Bind(Include = "JobId,UserId,DocId,DocName,DocTypeId,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,PrintJobQueueRefId,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatusId,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")] PrintJobs printJobs)
         {
             if (ModelState.IsValid)
             {
@@ -337,7 +333,7 @@ namespace SmartPrint.Controllers
         public ActionResult GetPrinterProperties(string PrinterSelected)
         {
             var printerprops = Printer.GetPrinterPropertiesList(PrinterSelected);
-            var printerQueuesdJobs = Printer.GetPrintJobsCollection(PrinterSelected);
+           var printerQueuesdJobs = Printer.GetPrintJobsCollection(PrinterSelected,7,"287.pdf",10);
 
             return Json(printerprops, JsonRequestBehavior.AllowGet);
         }

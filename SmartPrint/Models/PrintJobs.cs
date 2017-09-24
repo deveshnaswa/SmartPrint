@@ -63,6 +63,8 @@ namespace SmartPrint.Models
 
         [DisplayName("Credits Used")]
         public decimal CreditUsed { get; set; }
+        public int PrintJobQueueRefId { get; set; }
+
         public string JobError { get; set; }
         public string JobErrorRemarks { get; set; }
 

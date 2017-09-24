@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using System.Drawing.Printing;
+using SmartPrint.Helpers;
 
 namespace SmartPrint.Controllers
 {
@@ -134,24 +136,27 @@ namespace SmartPrint.Controllers
         */
             if (ModelState.IsValid)
             {
-
-               
+                
                 if (file.ContentLength > 0)
                 {
-                    string _FileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);//Path.GetFileName(file.FileName);
-                    string _FileExt = Path.GetExtension(file.FileName);
+                    var fileExtension = Path.GetExtension(file.FileName);
+                    var fileNameWithoutExtension = Guid.NewGuid().ToString();
+                    var fileNameToSave = $"{fileNameWithoutExtension}{fileExtension}";//Path.GetFileName(file.FileName);
+                    var pdfFileName = $"{fileNameWithoutExtension}.pdf";                    
                     int _FileSize = file.ContentLength;
+                    string directoryPath = Server.MapPath("~/UserFileUploads");
+                    string path = Path.Combine(directoryPath, fileNameToSave);
+                    string pdfFilePath = Path.Combine(directoryPath, pdfFileName);
+                    file.SaveAs(path);
+                    MakePdfCopy(path, pdfFilePath);
 
-                    string _path = Path.Combine(Server.MapPath("~/UserFileUploads"), _FileName);
-
-                        file.SaveAs(_path);
                     userDocs.DocName = userDocs.DocName;
-                        userDocs.DocFileName = _FileName;
-                        userDocs.DocCreatedDate = DateTime.Now;
-                        userDocs.UserId= int.Parse(System.Web.HttpContext.Current.User.Identity.GetUserId());
-                        userDocs.DocTypeId = userDocs.DocTypeId;
-                        userDocs.DocExt = _FileExt;
-                        userDocs.DocFilePath = _path;
+                    userDocs.DocFileName = fileNameToSave;
+                    userDocs.DocCreatedDate = DateTime.Now;
+                    userDocs.UserId= int.Parse(System.Web.HttpContext.Current.User.Identity.GetUserId());
+                    userDocs.DocTypeId = userDocs.DocTypeId;
+                    userDocs.DocExt = fileExtension;
+                    userDocs.DocFilePath = path;
                 }
 
                // string path = Path.Combine(Server.MapPath("~/UserFileUploads"), Path.GetFileName(file.FileName));
@@ -164,6 +169,12 @@ namespace SmartPrint.Controllers
             }
 
             return View(userDocs);
+        }
+
+        private void MakePdfCopy(string fileNameToSave, string pdfFileName)
+        {
+            var helper = new PrintHelper();
+            helper.PrintFileAsPdf(fileNameToSave, pdfFileName);
         }
 
         // GET: UserDocs/Edit/5

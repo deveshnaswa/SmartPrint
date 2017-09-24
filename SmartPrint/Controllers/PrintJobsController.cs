@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity;
 using SmartPrint.CustomLibaries;
 using System.Collections.Generic;
 using System.Web;
+using SmartPrint.Helpers;
 
 namespace SmartPrint.Controllers
 {
@@ -108,18 +109,42 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "JobId,UserId,DocId,DocName,DocTypeId,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatusId,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] PrintJobs printJobs)
+        //public ActionResult Create([Bind(Include = "JobId,UserId,DocId,DocName,DocTypeId,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatusId,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] PrintJobs printJobs)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        db.PrintJobs.Add(printJobs);
+        //        db.SaveChanges();
+        //        return RedirectToAction("Index");
+        //    }
+
+        //    return View(printJobs);
+        //}
+        public ActionResult Create([Bind(Include = "JobId,UserId,DocId,DocName,DocTypeId,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatusId,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] PrintJobs printJob)
         {
             if (ModelState.IsValid)
             {
-                db.PrintJobs.Add(printJobs);
+                //print
+                var printSettings = new PrintFileSettings()
+                {
+                    Copies = Convert.ToInt16(printJob.NumCopies),
+                    StartPage = printJob.PagesFrom,
+                    EndPage = printJob.PagesTo,
+                    FilePath = printJob.DocFilePath,
+                    PrinterName = printJob.PrinterName,
+                    IsDuplex = printJob.IsDuplex,
+                    IsColored = printJob.IsColor
+                };
+                var printHelper = new PrintHelper();
+                printHelper.PrintFile(printSettings);
+
+                db.PrintJobs.Add(printJob);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(printJobs);
+            return View(printJob);
         }
-
         // GET: PrintJobs/Edit/5
         public ActionResult Edit(int? id)
         {

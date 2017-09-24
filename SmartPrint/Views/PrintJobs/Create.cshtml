@@ -33,7 +33,7 @@
 
                     console.log(printcosts)
                     //alert(printcosts.length);
-                    alert("hi");
+                    //alert("hi");
                     $('#MonoUnitcost').val(printcosts[0].MonoCostPerPage);
                     $('#ColorUnitcost').val(printcosts[0].MonoCostPerPage);
 
@@ -58,6 +58,7 @@
                 success: function (printprops) {
 
                     console.log(printprops);
+                    $('#PrinterPath').val(printprops[0].Location);
 
                     //printprops[0].IsColored
                     if (printprops[0].IsColored == false) {
@@ -184,6 +185,35 @@
     <div class="form-horizontal">
     <h4>PrintJobs</h4>
     <hr />
+        
+        @*<div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Print Job Summary</h3>
+            </div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-md-3">Document Name</div>
+                    <div class="col-md-3">@(Model.DocName)</div>
+                    <div class="col-md-3">Printer Name</div>
+                    <div class="col-md-c">@(Model.PrinterName)</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">Credit Balance</div>
+                    <div class="col-md-3">@(Model.CreditUsed)</div>
+                    <div class="col-md-3">Printer Name</div>
+                    <div class="col-md-3">@(Model.PrinterName)</div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-3">Document Name</div>
+                    <div class="form-group">@(Model.DocName)</div>
+                    <div class="col-md-3">Printer Name</div>
+                    <div class="col-md-3">@(Model.PrinterName)</div>
+                </div>
+        </div>
+    </div>*@
+   
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
     @Html.HiddenFor(model => model.UserId)
@@ -194,7 +224,7 @@
     @Html.HiddenFor(model => model.DocExt)
     @Html.HiddenFor(model => model.DocFileNameOnServer)
     @Html.HiddenFor(model => model.DocFilePath)
-    @Html.HiddenFor(model => model.PrintcostId)
+    
     @Html.HiddenFor(model => model.UnitCost)
     @Html.HiddenFor(model => model.IsCollate)
     @Html.HiddenFor(model => model.MonoUnitcost)
@@ -228,7 +258,7 @@
         @Html.LabelFor(model => model.PrintcostId, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             <!--@Html.EditorFor(model => model.PrintcostId, new {htmlAttributes = new {@class = "form-control", disabled = "disabled"}})-->
-            @Html.DropDownList("PrintCostId", null, "Select",htmlAttributes: new { @class = "form-control", @onchange = "GetPrintCosts()" })
+            @Html.DropDownList("PrintcostId", null, "Select",htmlAttributes: new { @class = "form-control", @onchange = "GetPrintCosts()" })
             @Html.ValidationMessageFor(model => model.PrintcostId, "", new { @class = "text-danger" })
         </div>
     </div>   

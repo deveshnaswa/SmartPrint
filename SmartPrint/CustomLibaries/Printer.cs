@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using System.Management;
@@ -15,12 +16,15 @@ namespace SmartPrint.CustomLibaries
         public bool IsColored { get; set; }
         public string PrinterName { get; set; }
 
+        public string PrinterPath { get; set; }
+
         public PrinterDetails(Printer nativePrinter)
         {
             var capabilities = nativePrinter.Capabilities.ToList();
             IsDuplex = capabilities.Contains(3);
             IsColored = capabilities.Contains(2);
             PrinterName = nativePrinter.Name;
+            PrinterPath = nativePrinter.Location;
 
         }
     }
@@ -33,6 +37,7 @@ namespace SmartPrint.CustomLibaries
         {
             Capabilities = (ushort[]) printer["Capabilities"];
             Name = printer["Name"].ToString();
+           Location= printer["Name"].ToString();
         }
 
         public uint? Attributes;
@@ -135,7 +140,23 @@ namespace SmartPrint.CustomLibaries
 
             System.Management.ManagementObjectCollection printers = mosearcher.Get();
 
+            // the code below tries to keep the setting for keepig the printjobs active in the print queue.
 
+            /*
+            foreach (ManagementObject printer in printers)
+            {
+                PropertyDataCollection printerProperties = printer.Properties;
+                foreach (PropertyData property in printerProperties)
+                {
+                    if (property.Name == "KeepPrintedJobs")
+                    {
+                        printerProperties[property.Name].Value = true;
+                    }
+                }
+                printer.Put();
+            }
+
+            */
             foreach (ManagementObject printer in printers)
             {
                 /*var state = "(Available Online)";
@@ -184,6 +205,34 @@ namespace SmartPrint.CustomLibaries
             return result;
         }
 
+
+        public static StringCollection GetPrintJobsCollection(string printerName)
+        {
+            StringCollection printJobCollection = new StringCollection();
+            string searchQuery = "SELECT * FROM Win32_PrintJob";
+
+            /*searchQuery can also be mentioned with where Attribute,
+                but this is not working in Windows 2000 / ME / 98 machines 
+                and throws Invalid query error*/
+            ManagementObjectSearcher searchPrintJobs =
+                new ManagementObjectSearcher(searchQuery);
+            ManagementObjectCollection prntJobCollection = searchPrintJobs.Get();
+            foreach (ManagementObject prntJob in prntJobCollection)
+            {
+                System.String jobName = prntJob.Properties["Name"].Value.ToString();
+
+                //Job name would be of the format [Printer name], [Job ID]
+                char[] splitArr = new char[1];
+                splitArr[0] = Convert.ToChar(",");
+                string prnterName = jobName.Split(splitArr)[0];
+                string documentName = prntJob.Properties["Document"].Value.ToString();
+                if (String.Compare(prnterName, printerName, true) == 0)
+                {
+                    printJobCollection.Add(documentName);
+                }
+            }
+            return printJobCollection;
+        }
 
         /*
         public static SelectList FetchPrinterProps(string PrinterSelected)

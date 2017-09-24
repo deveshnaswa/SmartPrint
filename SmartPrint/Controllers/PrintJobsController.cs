@@ -333,7 +333,7 @@ namespace SmartPrint.Controllers
         public ActionResult GetPrinterProperties(string PrinterSelected)
         {
             var printerprops = Printer.GetPrinterPropertiesList(PrinterSelected);
-           var printerQueuesdJobs = Printer.GetPrintJobsCollection(PrinterSelected,7,"287.pdf",10);
+           //var printerQueuesdJobs = Printer.GetPrintJobsCollection(PrinterSelected,7,"287.pdf",10);
 
             return Json(printerprops, JsonRequestBehavior.AllowGet);
         }

@@ -234,6 +234,9 @@ namespace SmartPrint.CustomLibaries
                     System.String jobName = prntJob.Properties["JobStatus"].Value.ToString();
 
                     // update the printjobs table and update the status of the print job
+
+
+
                     printJobCollection.Add(jobName);
                 }
             }

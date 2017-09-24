@@ -25,13 +25,32 @@ namespace SmartPrint.Controllers
             {
                 var printerName = Job.PrinterName;
                 var printjobRefid = Job.PrintJobQueueRefId;
-                var printJobId = Job.PrintJobQueueRefId;
+                var printJobId = Job.JobId;
                 var documentName = Job.DocFileNameOnServer;
 
                 // get status from print job queue win32_pintjobs
-                var JobQueueStatus = Printer.GetPrintJobsCollection(printerName,printjobRefid,documentName,printJobId);
-               
+                var jobQueueStatus = Printer.GetPrintJobsCollection(printerName,printjobRefid,documentName,printJobId);
+
                 //update database table printjobs with the status for that table
+
+
+                //MainDbContext db= new MainDbContext();
+                PrintJobs printjobs=
+                    db.PrintJobs.Single(c => c.JobId == printJobId);
+
+                printjobs.JobError = jobQueueStatus.ToString();
+
+                
+                // Submit the changes to the database.
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    // Provide for exceptions.
+                }
             }
             return View(db.PrintJobs.ToList());
         }

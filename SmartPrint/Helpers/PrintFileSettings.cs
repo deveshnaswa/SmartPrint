@@ -16,6 +16,7 @@
         public string PaperName { get; set; }
         public int StartPage { get; set; }
         public int EndPage { get; set; }
+       public System.Drawing.Printing.Duplex Duplex { get; set; }
 
     }
 }

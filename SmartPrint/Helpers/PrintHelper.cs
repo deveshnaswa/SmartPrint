@@ -68,16 +68,23 @@ namespace SmartPrint.Helpers
         {
             try
             {
+                if (settings.IsDuplex)
+                {
+                    settings.Duplex = Duplex.Default;
+                }
+               
+
                 // Create the printer settings for our printer
                 var printerSettings = new PrinterSettings
                 {
                     PrinterName = settings.PrinterName,
                     Copies = settings.Copies,
-                    //Duplex = settings.IsDuplex,
+                   
                     FromPage = settings.StartPage,
                     ToPage = settings.EndPage
+                    
                 };
-
+                
                 // Create our page settings for the paper size selected
                 var pageSettings = new PageSettings(printerSettings)
                 {
@@ -100,6 +107,17 @@ namespace SmartPrint.Helpers
                         printDocument.PrinterSettings = printerSettings;
                         printDocument.DefaultPageSettings = pageSettings;
                         printDocument.PrintController = new StandardPrintController();
+                        if (printDocument.PrinterSettings.SupportsColor)
+                        {
+                            if (settings.IsColored)
+                            {
+                                printDocument.DefaultPageSettings.Color = true;
+                            }
+                            else
+                            {
+                                printDocument.DefaultPageSettings.Color = false;
+                            }
+                        }
                         printDocument.Print();
                     }
                 }

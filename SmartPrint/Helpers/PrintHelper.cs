@@ -109,14 +109,13 @@ namespace SmartPrint.Helpers
                         printDocument.PrintController = new StandardPrintController();
                         if (printDocument.PrinterSettings.SupportsColor)
                         {
-                            if (settings.IsColored)
+                            if (settings.IsDuplex)
                             {
-                                printDocument.DefaultPageSettings.Color = true;
+                                printDocument.PrinterSettings.Duplex = Duplex.Vertical;
                             }
-                            else
-                            {
-                                printDocument.DefaultPageSettings.Color = false;
-                            }
+
+
+                            printDocument.DefaultPageSettings.Color = settings.IsColored;
                         }
                         printDocument.Print();
                     }

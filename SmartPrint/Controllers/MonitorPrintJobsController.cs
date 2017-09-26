@@ -18,10 +18,13 @@ namespace SmartPrint.Controllers
         // GET: PrintJobs
         public ActionResult Index()
         {
-            // get all 
-            var result = db.PrintJobs.Where(x => x.StatusId == 1).ToList();
+            // get all from printjobs table
+         
 
-            foreach (var Job in result)
+            var results = db.PrintJobs.Where(o => (o.JobStatusId== 0))
+                                        .Where(o => (o.PrintJobQueueRefId!= 0));
+
+            foreach (var Job in results)
             {
                 var printerName = Job.PrinterName;
                 var printjobRefid = Job.PrintJobQueueRefId;
@@ -29,28 +32,37 @@ namespace SmartPrint.Controllers
                 var documentName = Job.DocFileNameOnServer;
 
                 // get status from print job queue win32_pintjobs
-                var jobQueueStatus = Printer.GetPrintJobsCollection(printerName,printjobRefid,documentName,printJobId);
-
-                //update database table printjobs with the status for that table
+                var jobQueueStatus = GetPrintJobsCollection(printerName,printjobRefid,documentName);
 
 
-                //MainDbContext db= new MainDbContext();
-                PrintJobs printjobs=
-                    db.PrintJobs.Single(c => c.JobId == printJobId);
+                using (var db = new MainDbContext())
+                {
+                    var result = db.PrintJobs.SingleOrDefault(b => b.JobId== printJobId);
+                    if (result != null)
+                    {
+                        result.JobError= "Some new value";
+                        result.JobStatusId= 0;
+                        db.SaveChanges();
+                    }
+                }
 
-                printjobs.JobError = jobQueueStatus.ToString();
+                ////MainDbContext db= new MainDbContext();
+                //PrintJobs uPrintjobs=
+                //    db.PrintJobs.Single(c => c.JobId == printJobId);
+
+                //uPrintjobs.JobError = jobQueueStatus.ToString();
 
                 
-                // Submit the changes to the database.
-                try
-                {
-                    db.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    // Provide for exceptions.
-                }
+                //// Submit the changes to the database.
+                //try
+                //{
+                //    db.SaveChanges();
+                //}
+                //catch (Exception e)
+                //{
+                //    Console.WriteLine(e);
+                //    // Provide for exceptions.
+                //}
             }
             return View(db.PrintJobs.ToList());
         }
@@ -61,33 +73,40 @@ namespace SmartPrint.Controllers
 
         public static string GetPrintJobsCollection(string printerName,int jobRefId,string fileName)
         {
-            StringCollection printJobCollection = new StringCollection();
-
+           //StringCollection printJobCollection = new StringCollection();
+            var jobStatus = string.Empty;
             string searchQuery = "SELECT * FROM Win32_PrintJob WHERE JobId='" + jobRefId + "' and Document = '"+fileName+"'";
 
-            //string query = "SELECT * FROM Win32_PrintJob WHERE JobID='" + lstJobs.Text + "'";
-
-            /*searchQuery can also be mentioned with where Attribute,
-                but this is not working in Windows 2000 / ME / 98 machines 
-                and throws Invalid query error*/
-            ManagementObjectSearcher searchPrintJobs =
+           ManagementObjectSearcher searchPrintJobs =
                 new ManagementObjectSearcher(searchQuery);
             ManagementObjectCollection prntJobCollection = searchPrintJobs.Get();
             foreach (ManagementObject prntJob in prntJobCollection)
             {
-                System.String jobName = prntJob.Properties["Name"].Value.ToString();
+                var printerJob = string.Empty;
 
-                //Job name would be of the format [Printer name], [Job ID]
-                char[] splitArr = new char[1];
-                splitArr[0] = Convert.ToChar(",");
-                string prnterName = jobName.Split(splitArr)[0];
-                string documentName = prntJob.Properties["Document"].Value.ToString();
-                if (String.Compare(prnterName, printerName, true) == 0)
+                // check criteria first : if the printJob property [Name] is not null
+
+                if (prntJob.Properties["Name"].Value != null)
                 {
-                    printJobCollection.Add(documentName);
+                    printerJob = prntJob.Properties["Name"].Value.ToString();
+                    char[] splitArr = new char[1];
+                    splitArr[0] = Convert.ToChar(",");
+                    string prnterName = printerJob.Split(splitArr)[0];
+
+                    // check second criteria and match if PrintJob=>Printer =JobQueue=>Printer
+                    if (String.Compare(prnterName, printerName, true) == 0)
+                    {
+                        
+                       
+                        if (prntJob.Properties["JobStatus"].Value != null)
+                        {
+                            jobStatus = prntJob.Properties["JobStatus"].Value.ToString();
+                        }
+                    }
+
                 }
             }
-            return "";
+            return jobStatus;
         }
     }
 }

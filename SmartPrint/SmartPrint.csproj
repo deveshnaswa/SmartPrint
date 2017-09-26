@@ -157,6 +157,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Common\Enums\RecordStatus.cs" />
+    <Compile Include="Common\Enums\TransactionStatus.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\DocTypesController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />

@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity;
 using SmartPrint.CustomLibaries;
 using System.Collections.Generic;
 using System.Web;
+using SmartPrint.Common.Enums;
 using SmartPrint.Helpers;
 
 namespace SmartPrint.Controllers
@@ -90,14 +91,16 @@ namespace SmartPrint.Controllers
 
 
             ViewBag.PrinterName = new SelectList(Printer.GetPrinterList(),"Value","Text");
-            
-            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+
+            var recordStatusOptions = Enum.GetNames(typeof(RecordStatus)).
+                Select(o => new { Text = o, Value = (int)Enum.Parse(typeof(RecordStatus), o) });
+            ViewBag.StatusId = new SelectList(recordStatusOptions, "Value", "Text");
 
             ViewBag.PrintCostId= new SelectList(db.PrintCosts, "PrintCostId", "Name");
             ViewBag.UserDocsId = userDocsToPrint.DocId;
 
             // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
-            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+            //ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
             // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
 
            
@@ -114,7 +117,7 @@ namespace SmartPrint.Controllers
         public ActionResult Create(PrintJobs printJobs)
         {
 
-
+            int ReferenceJobId = 0;
             UserTxns userTransaction = new UserTxns();
             // get transaction balance of the user for checking credit score
             decimal jTxnBalance = 0;
@@ -206,7 +209,8 @@ namespace SmartPrint.Controllers
                         IsColored = printJobs.IsColor
                     };
                     var printHelper = new PrintHelper();
-                    printHelper.PrintFile(printSettings);
+                    ReferenceJobId = Int32.Parse(printHelper.PrintFile(printSettings));
+                    
 
                 }
                 else
@@ -227,6 +231,7 @@ namespace SmartPrint.Controllers
             if (ModelState.IsValid)
             {
                 //insert printjobs
+                printJobs.PrintJobQueueRefId =ReferenceJobId;
                 db.PrintJobs.Add(printJobs);
                 db.SaveChanges();
                 var refprintjobid = printJobs.JobId;
@@ -241,8 +246,9 @@ namespace SmartPrint.Controllers
             
 
             ViewBag.PrinterName = new SelectList(Printer.GetPrinterList(),"Value","Text");
-            
-            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+            var recordStatusOptions = Enum.GetNames(typeof(RecordStatus)).
+                Select(o => new { Text = o, Value = (byte)(Enum.Parse(typeof(RecordStatus), o)) });
+                ViewBag.StatusId = new SelectList(recordStatusOptions, "Value", "Text");
 
             ViewBag.PrintCostId= new SelectList(db.PrintCosts, "PrintCostId", "Name");
             

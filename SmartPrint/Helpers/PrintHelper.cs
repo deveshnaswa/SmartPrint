@@ -1,9 +1,10 @@
-﻿using System.Diagnostics;
-using System.Management;
-using System.IO;
-using System.Drawing.Printing;
-using PdfiumViewer;
+﻿using PdfiumViewer;
 using System;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Drawing.Printing;
+using System.IO;
+using System.Management;
 
 namespace SmartPrint.Helpers
 {
@@ -41,6 +42,7 @@ namespace SmartPrint.Helpers
                 printJob.StartInfo.Arguments = args;// + " " + printerExtraParameters;
                 printJob.StartInfo.WorkingDirectory = Path.GetDirectoryName(path);
                 printJob.Start();
+                
             }
             
         }
@@ -64,8 +66,9 @@ namespace SmartPrint.Helpers
             return result;
         }
 
-        public bool PrintFile(PrintFileSettings settings)
+        public string PrintFile(PrintFileSettings settings)
         {
+            string MyJobId = "";
             try
             {
                 if (settings.IsDuplex)
@@ -104,8 +107,11 @@ namespace SmartPrint.Helpers
                 {
                     using (var printDocument = document.CreatePrintDocument())
                     {
+                        //printDocument.BeginPrint += new PrintEventHandler(oyo);
+
                         printDocument.PrinterSettings = printerSettings;
                         printDocument.DefaultPageSettings = pageSettings;
+                        printDocument.DocumentName = Path.GetFileName(settings.FilePath);
                         printDocument.PrintController = new StandardPrintController();
                         if (printDocument.PrinterSettings.SupportsColor)
                         {
@@ -118,14 +124,69 @@ namespace SmartPrint.Helpers
                             printDocument.DefaultPageSettings.Color = settings.IsColored;
                         }
                         printDocument.Print();
+
+                     string   fname = Path.GetFileName(settings.FilePath);
+                        //match document name and printer name within last 2 Sec and update the job id
+                       MyJobId=  setRefJobId(fname,printerSettings.PrinterName);
+                        
                     }
                 }
-                return true;
+
+                
+                return MyJobId;
             }
             catch(Exception ex)
             {
-                return false;
+                return "error";
             }
         }
+
+        private string setRefJobId(string fileName,string printerName )
+        {
+
+            string JobRefId = "";
+            StringCollection printJobCollection = new StringCollection();
+
+            // string searchQuery = "SELECT * FROM Win32_PrintJob";
+            string searchQuery = "SELECT * FROM Win32_PrintJob WHERE DriverName='" + printerName+ "' and Document = '" + fileName + "'";
+
+            ManagementObjectSearcher searchPrintJobs =new ManagementObjectSearcher(searchQuery);
+            ManagementObjectCollection prntJobCollection = searchPrintJobs.Get();
+            
+            foreach (ManagementObject prntJob in prntJobCollection)
+            {
+                // System.String jobName = prntJob.Properties["JobStatus"].Value.ToString();
+                System.String PrinterName = prntJob.Properties["Name"].Value.ToString();
+
+                //Job name would be of the format [Printer name], [Job ID]
+                char[] splitArr = new char[1];
+                splitArr[0] = Convert.ToChar(",");
+                string prnterName = PrinterName.Split(splitArr)[0];
+                //string documentName = prntJob.Properties["Document"].Value.ToString();
+                if (String.Compare(prnterName, printerName, true) == 0)
+                {
+                  /*  var jobStatus = string.Empty;
+                    if (prntJob.Properties["JobStatus"] != null)
+                    {
+                        jobStatus = prntJob.Properties["JobStatus"].Value.ToString();
+                    }
+                    */
+                    JobRefId = prntJob.Properties["JobId"].Value.ToString();
+
+                    // update the printjobs table and update the status of the print job
+
+
+
+                   // printJobCollection.Add(jobName);
+                }
+            }
+            return JobRefId;
+        }
+
+        private void HandleEvent(object sender, EventArrivedEventArgs e)
+        {
+           
+        }
+
     }
 }

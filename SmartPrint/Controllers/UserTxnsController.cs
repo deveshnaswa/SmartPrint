@@ -35,7 +35,8 @@ namespace SmartPrint.Controllers
         // GET: UserTxns/Create
         public ActionResult Create()
         {
-           // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
+            ViewBag.Users= new SelectList(db.Users, "UserId", "FName" );
+            ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
             ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
             //ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
 

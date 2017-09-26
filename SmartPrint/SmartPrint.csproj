@@ -156,6 +156,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
+    <Compile Include="Common\Enums\RecordStatus.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\DocTypesController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="CustomLibaries\CustomDecrypt.cs" />
     <Compile Include="CustomLibaries\CustomEncrypt.cs" />
     <Compile Include="CustomLibaries\Printer.cs" />
+    <Compile Include="CustomLibaries\PrintJobWatcher.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

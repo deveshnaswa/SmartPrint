@@ -15,7 +15,7 @@
             @Html.DisplayNameFor(model => model.UserId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TxnTypeId)
+            @Html.DisplayNameFor(model => model.TTypes.TxnTypeName)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.TxnAmount)
@@ -30,9 +30,9 @@
             @Html.DisplayNameFor(model => model.TxnRefJobId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TxnStatus)
+            @Html.DisplayNameFor(model => model.TxnStatus.StatusName)
         </th>
-        <th>
+        @*<th>
             @Html.DisplayNameFor(model => model.AddedBy)
         </th>
         <th>
@@ -46,7 +46,7 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.StatusId)
-        </th>
+        </th>*@
         <th></th>
     </tr>
 
@@ -56,7 +56,7 @@
             @Html.DisplayFor(modelItem => item.UserId)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TxnTypeId)
+            @Html.DisplayFor(modelItem => item.TTypes.TxnTypeName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.TxnAmount)
@@ -71,9 +71,9 @@
             @Html.DisplayFor(modelItem => item.TxnRefJobId)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TxnStatus)
+            @Html.DisplayFor(modelItem => item.TxnStatus.StatusName)
         </td>
-        <td>
+        @*<td>
             @Html.DisplayFor(modelItem => item.AddedBy)
         </td>
         <td>
@@ -87,7 +87,7 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.StatusId)
-        </td>
+        </td>*@
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.TxnId }) |
             @Html.ActionLink("Details", "Details", new { id=item.TxnId }) |

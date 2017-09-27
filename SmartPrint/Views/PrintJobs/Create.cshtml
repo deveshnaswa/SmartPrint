@@ -4,6 +4,7 @@
 @{
     ViewBag.Title = "Create";
     var userdoc = ViewBag.UserDocsId;
+    var totalpage = ViewBag.TotalPages;
 
     Document document = null;
     if (ViewBag.Document != null)
@@ -239,7 +240,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.PagesFrom, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.PagesFrom, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.EditorFor(model => model.PagesFrom, new { htmlAttributes = new {  min = 1, max = totalpage, @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.PagesFrom, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -247,7 +248,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.PagesTo, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.PagesTo, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.EditorFor(model => model.PagesTo, new { htmlAttributes = new { min = 1, max = totalpage, @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.PagesTo, "", new { @class = "text-danger" })
                     </div>
                 </div>

@@ -57,37 +57,10 @@ namespace SmartPrint.Controllers
             model.DocExt = userDocsToPrint.DocExt;
             model.DocFileNameOnServer =userDocsToPrint.DocFileName;
             model.DocFilePath = userDocsToPrint.DocFilePath;
+            ViewBag.TotalPages = getTotalPagesByDoc(userDocsToPrint.DocFilePath);
             ViewBag.Document = new Document(userDocsToPrint.DocFileName, userDocsToPrint.DocFilePath);
 
-            /*model.DocTotalPages = "";
-            model.PrintCostId = "";
-            model.MonoPages = "";
-            model.ColorPages = "";
-            model.IsColor = "";
-            model.IsDuplex = "";
-            model.IsCollate = "";
-            model.UnitCost = "";
-            model.MonoUnitCost = "";
-            model.ColorUnitCost = "";
-            model.UnitItem = "";
-            model.JobRemarks = "";
-            model.PagesFrom = "";
-            model.PagesTo = "";
-            model.NumCopies = "";
-            model.TotalPageCount = "";
-            model.TotalPageCost = "";
-            model.CreditUsed = "";
-            model.JobError = "";
-            model.JobErrorRemarks = "";
-            model.PrinterName = "";
-            model.PrinterPath = "";
-            model.JobStatusId = "";
-            model.AddedBy = "";
-            model.AddedOn = "";
-            model.EditedBy = "";
-            model.EditedOn = "";
-            model.StatusId = "";
-            */
+         
 
 
             ViewBag.PrinterName = new SelectList(Printer.GetPrinterList(),"Value","Text");
@@ -117,8 +90,11 @@ namespace SmartPrint.Controllers
         public ActionResult Create(PrintJobs printJobs)
         {
 
+            int jtotalpage;
+
             int ReferenceJobId = 0;
             UserTxns userTransaction = new UserTxns();
+
             // get transaction balance of the user for checking credit score
             decimal jTxnBalance = 0;
             // get user info
@@ -193,7 +169,7 @@ namespace SmartPrint.Controllers
                     userTransaction.TxnDateTime = DateTime.Now;
                     userTransaction.TxnBalance = jTxnBalance - jPrintingCostTotal;
                     //userTransaction.TxnRefJobId = jPrintJobRefId;
-                    userTransaction.TxnStatus = 0;
+                    userTransaction.TxnStatusId = 0;
                     userTransaction.StatusId = 1;
 
                     //send document to print ->job
@@ -209,8 +185,10 @@ namespace SmartPrint.Controllers
                         IsColored = printJobs.IsColor
                     };
                     var printHelper = new PrintHelper();
+
                     ReferenceJobId = Int32.Parse(printHelper.PrintFile(printSettings));
-                    
+                    //jtotalpage = Int32.Parse(printHelper.GetPrintFileTotalPages(printSettings));
+
 
                 }
                 else
@@ -232,6 +210,7 @@ namespace SmartPrint.Controllers
             {
                 //insert printjobs
                 printJobs.PrintJobQueueRefId =ReferenceJobId;
+                //printJobs.TotalPageCount = jtotalpage;
                 db.PrintJobs.Add(printJobs);
                 db.SaveChanges();
                 var refprintjobid = printJobs.JobId;
@@ -445,5 +424,15 @@ namespace SmartPrint.Controllers
             return View();
         }
 
+        public int getTotalPagesByDoc(string filename)
+        {
+            var printSettings = new PrintFileSettings()
+            {
+               FilePath = filename
+            };
+            var printHelper = new PrintHelper();
+
+            return Int32.Parse(printHelper.GetPrintFileTotalPages(printSettings));
+        }
     }
 }

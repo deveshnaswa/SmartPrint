@@ -23,7 +23,7 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.TxnTypeId)
+            @Html.DisplayFor(model => model.TTypes.TxnTypeName)
         </dd>
 
         <dt>
@@ -63,10 +63,10 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.TxnStatus)
+            @Html.DisplayFor(model => model.TxnStatus.StatusName)
         </dd>
 
-        <dt>
+        @*<dt>
             @Html.DisplayNameFor(model => model.AddedBy)
         </dt>
 
@@ -96,7 +96,7 @@
 
         <dd>
             @Html.DisplayFor(model => model.EditedOn)
-        </dd>
+        </dd>*@
 
         <dt>
             @Html.DisplayNameFor(model => model.StatusId)

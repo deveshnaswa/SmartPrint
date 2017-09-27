@@ -4,12 +4,51 @@
     ViewBag.Title = "Create";
 }
 
+
+@section Scripts {
+    <script>
+
+
+        function GetUserBalance() {
+
+
+            var usId = $('#UserId').val();
+            $.ajax({
+                url: '/UserTxns/GetTxnBalance',
+                type: "GET",
+                dataType: "JSON",
+                data: { userId: usId },
+                success: function (printcosts) {
+
+                    console.log(printcosts);
+                    console.log(printcosts.length);
+
+                    $('#TxnBalance').val(printcosts.TxnBalance);
+                   // $('#ColorUnitcost').val(printcosts[0].MonoCostPerPage);
+
+                },
+                error: function (e) {
+                    alert(e);
+                }
+
+            });
+        }
+        
+
+
+    </script>
+
+}
 <h2>Create</h2>
 
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
     
+    @*@Html.HiddenFor(model => model.TxnBalance)
+    @Html.HiddenFor(model => model.TxnDateTime)
+    @Html.HiddenFor(model => model.TxnRefJobId)*@
+
     <div class="form-horizontal">
         <h4>UserTxns</h4>
         <hr />
@@ -18,7 +57,7 @@
             @Html.LabelFor(model => model.UserId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @*@Html.EditorFor(model => model.UserId, new { htmlAttributes = new { @class = "form-control" } })*@
-                @Html.DropDownList("Users", null, "Select", htmlAttributes: new { @class = "form-control", @onchange = "GetUserBalance()" })
+                @Html.DropDownList("UserId", null, "Select", htmlAttributes: new { @class = "form-control", @onchange = "GetUserBalance()" })
                 @Html.ValidationMessageFor(model => model.UserId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -26,8 +65,8 @@
         <div class="form-group">
             @Html.LabelFor(model => model.TxnTypeId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.TxnTypeId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.DropDownList("Users", null, "Select", htmlAttributes: new { @class = "form-control", @onchange = "GetUserBalance()" })
+                @*@Html.EditorFor(model => model.TxnTypeId, new { htmlAttributes = new { @class = "form-control" } })*@
+                @Html.DropDownList("TxnTypeId", null, "Select", htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.TxnTypeId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -39,11 +78,12 @@
                 @Html.ValidationMessageFor(model => model.TxnAmount, "", new { @class = "text-danger" })
             </div>
         </div>
-
+      
+                
         <div class="form-group">
             @Html.LabelFor(model => model.TxnDateTime, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.TxnDateTime, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.TxnDateTime, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 @Html.ValidationMessageFor(model => model.TxnDateTime, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -51,11 +91,13 @@
         <div class="form-group">
             @Html.LabelFor(model => model.TxnBalance, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.TxnBalance, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.TxnBalance, new { htmlAttributes = new { @class = "form-control",@readonly="readonly" } })
                 @Html.ValidationMessageFor(model => model.TxnBalance, "", new { @class = "text-danger" })
             </div>
         </div>
-
+      
+        
+                
         <div class="form-group">
             @Html.LabelFor(model => model.TxnRefJobId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -65,10 +107,10 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.TxnStatus, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.TxnStatusId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.TxnStatus, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.TxnStatus, "", new { @class = "text-danger" })
+                @Html.DropDownList("TxnStatusId", null,"Select", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.TxnStatusId, "", new { @class = "text-danger" })
             </div>
         </div>
         <!--

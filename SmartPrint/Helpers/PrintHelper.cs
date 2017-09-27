@@ -66,6 +66,28 @@ namespace SmartPrint.Helpers
             return result;
         }
 
+
+
+        public string GetPrintFileTotalPages(PrintFileSettings settings)
+        {
+            string totalPageCount = "";
+            try
+            {
+
+
+                var document = PdfDocument.Load(settings.FilePath);
+                    totalPageCount = document.PageCount.ToString();
+
+
+                return totalPageCount;
+            }
+            catch (Exception ex)
+            {
+                return "error";
+            }
+        }
+
+
         public string PrintFile(PrintFileSettings settings)
         {
             string MyJobId = "";

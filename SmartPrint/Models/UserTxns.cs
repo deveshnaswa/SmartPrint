@@ -16,8 +16,11 @@ namespace SmartPrint.Models
         [DisplayName("User Name")]
         public int UserId { get; set; }
 
+    
         [DisplayName("Transaction Type")]
         public int TxnTypeId { get; set; }
+        [DisplayName("Transaction Type")]
+        public virtual TTypes TTypes {get;set;}
 
         [DisplayName("Transaction Amount")]
         public decimal TxnAmount { get; set; }
@@ -34,8 +37,11 @@ namespace SmartPrint.Models
         public int TxnRefJobId { get; set; }
 
         [DisplayName("Transaction Status")]
-        public int TxnStatus { get; set; }
+        public int TxnStatusId { get; set; }
 
+        [DisplayName("Transaction Status")]
+        public virtual TxnStatus TxnStatus { get; set; }
+       
         [DisplayName("Added By")]
         public int AddedBy { get; set; }
 

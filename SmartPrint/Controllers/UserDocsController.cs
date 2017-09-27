@@ -160,6 +160,7 @@ namespace SmartPrint.Controllers
                     userDocs.DocFilePath = path;
                 }
 
+
                // string path = Path.Combine(Server.MapPath("~/UserFileUploads"), Path.GetFileName(file.FileName));
                 //file.SaveAs(path);
                 

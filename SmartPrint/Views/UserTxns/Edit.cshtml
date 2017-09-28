@@ -2,6 +2,13 @@
 
 @{
     ViewBag.Title = "Edit";
+   // int mTransactionTypeId = tt.TxnTypeId;
+   string ttypename = ViewBag.TransactionTypeName;
+
+    //Users uu = db.Users.Find(userTxns.UserId.ToString());
+    //ViewBag.UserId = uu.UserId;
+    string   userName = ViewBag.UserName;
+
 }
 
 <h2>Edit</h2>
@@ -16,21 +23,28 @@
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.TxnId)
         @Html.HiddenFor(model => model.UserId)
+        @Html.HiddenFor(model => model.TxnTypeId)
+        @Html.HiddenFor(model => model.TxnDateTime)
+        @Html.HiddenFor(model => model.TxnRefJobId)
+
+
 
         <div class="form-group">
             @Html.LabelFor(model => model.UserId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @*@Html.EditorFor(model => model.UserId, new { htmlAttributes = new { @class = "form-control" } })*@
-                @Html.DropDownList("UserId", null, "Select", htmlAttributes: new { @class = "form-control", @readonly = "readonly", @onchange = "GetUserBalance()" })
-                 @Html.ValidationMessageFor(model => model.UserId, "", new { @class = "text-danger" })
+                @Html.Label(userName);
+                @*@Html.DropDownList("UserId", null, "Select", htmlAttributes: new { @class = "form-control", @readonly = "readonly", @onchange = "GetUserBalance()" })
+                 @Html.ValidationMessageFor(model => model.UserId, "", new { @class = "text-danger" })*@
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.TxnTypeId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("TxnTypeId", null, "Select", htmlAttributes: new { @class = "form-control" , @readonly = "readonly" })
-                @Html.ValidationMessageFor(model => model.TxnTypeId, "", new { @class = "text-danger" })
+                @Html.Label(ttypename);
+                @*@Html.DropDownList("TxnTypeId", null, "Select", htmlAttributes: new { @class = "form-control" , @readonly = "readonly" })
+                @Html.ValidationMessageFor(model => model.TxnTypeId, "", new { @class = "text-danger" })*@
             </div>
         </div>
 

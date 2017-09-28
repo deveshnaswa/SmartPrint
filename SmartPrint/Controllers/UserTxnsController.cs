@@ -1,5 +1,7 @@
 ﻿using SmartPrint.Models;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -15,7 +17,7 @@ namespace SmartPrint.Controllers
         // GET: UserTxns
         public ActionResult Index()
         {
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FName");
+            ViewBag.Users = new SelectList(db.Users, "UserId", "UserName");
             ViewBag.TxnTypeId= new SelectList(db.TTypes, "TxnTypeId", "TxnTypeName");
             ViewBag.TxnStatusId = new SelectList(db.TxnStatus, "StatusId", "StatusName");
             ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
@@ -111,7 +113,7 @@ namespace SmartPrint.Controllers
             decimal jTxnBalance=0;
             var result = db.UserTxns
                 .Where(tx => tx.UserId == userId)   // Filter
-                .OrderByDescending(tx => tx.TxnId) // prioritet is still here - order by it
+                .OrderByDescending(tx => tx.TxnId) //  order by it
                 .FirstOrDefault();  // Now grab the transaction balance
 
             if (result != null)
@@ -148,8 +150,15 @@ namespace SmartPrint.Controllers
             }
 
 
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FName",userTxns.UserId);
-            ViewBag.TxnTypeId = new SelectList(db.TTypes, "TxnTypeId", "TxnTypeName",userTxns.TxnTypeId);
+            string txntypid = userTxns.TxnTypeId.ToString();
+           TTypes tt= db.TTypes.Find(int.Parse(txntypid.ToString()));
+            ViewBag.TransactionTypeId = tt.TxnTypeId.ToString();
+            ViewBag.TransactionTypeName = tt.TxnTypeName.ToString();
+            string userid = userTxns.UserId.ToString();
+            Users uu = db.Users.Find(int.Parse(userid.ToString()));
+            ViewBag.UserId = uu.UserId;
+            ViewBag.UserName = uu.UserName;
+            //ViewBag.TxnTypeId = new SelectList(db.TTypes, "TxnTypeId", "TxnTypeName",userTxns.TxnTypeId);
             ViewBag.TxnStatusId = new SelectList(db.TxnStatus, "StatusId", "StatusName",userTxns.TxnStatusId);
             //ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
             //ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
@@ -166,8 +175,9 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "TxnId,UserId,TxnTypeId,TxnAmount,TxnDateTime,TxnBalance,TxnRefJobId,TxnStatusId,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")] UserTxns userTxns)
+        public ActionResult Edit( UserTxns userTxns)
         {
+            //[Bind(Include = "TxnId,UserId,TxnTypeId,TxnAmount,TxnDateTime,TxnBalance,TxnRefJobId,TxnStatusId,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")]
             if (ModelState.IsValid)
             {
                 db.Entry(userTxns).State = EntityState.Modified;

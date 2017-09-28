@@ -15,7 +15,7 @@ namespace SmartPrint.Models
 
         [DisplayName("User Name")]
         public int UserId { get; set; }
-
+        public virtual Users Users { get; set; }
     
         [DisplayName("Transaction Type")]
         public int TxnTypeId { get; set; }

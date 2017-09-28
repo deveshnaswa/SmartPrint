@@ -73,7 +73,7 @@ namespace SmartPrint.Controllers
         {
             ViewBag.DocTypeId = new SelectList(db.DocTypes, "DocTypeId", "DocType");
             ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
-            ViewBag.UserId = new SelectList(db.Users,"UserId","FName"+ " " +"LName");
+            ViewBag.UserId = new SelectList(db.Users,"UserId", "UserName");
            // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
 
             return View();

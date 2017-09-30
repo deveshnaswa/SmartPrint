@@ -1,9 +1,12 @@
 ﻿using SmartPrint.CustomLibraries;
+using SmartPrint.Helpers.User;
 using SmartPrint.Models;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Runtime.Caching;
 using System.Web.Mvc;
 
 namespace SmartPrint.Controllers
@@ -17,7 +20,18 @@ namespace SmartPrint.Controllers
         {
             return View(db.Users.ToList());
         }
-
+        public ActionResult IndexSearch(string id)
+        {
+            var userHelper = new UserHelper(db);
+            var result = userHelper.SearchUsers(id);
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+        public ActionResult SearchUsers(string query)
+        {
+            var userHelper = new UserHelper(db);
+            var result = userHelper.SearchUsers(query).Select(x => new Autocomplete() {Id = x.UserId, Name = x.Name });
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
         // GET: Users/Details/5
         public ActionResult Details(int? id)
         {
@@ -36,10 +50,10 @@ namespace SmartPrint.Controllers
         // GET: Users/Create
         public ActionResult Create()
         {
-            ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
-            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
-            ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
-           
+            ViewBag.UserTypeId = new SelectList(MemoryCache.Default.Get(Common.Constants.UserTypeListName) as Dictionary<int, string>, "Key", "Value");
+            ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value");
+            ViewBag.UStatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value");
+
             return View();
         }
 
@@ -80,8 +94,8 @@ namespace SmartPrint.Controllers
             var decryptPassword = CustomDecrypt.Decrypt(users.UserPass);
             users.UserPass = decryptPassword;
             ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType",users.UserTypeId);
-            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName", users.StatusId);
-            ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName", users.UStatusId);
+            ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value",users.StatusId);
+            ViewBag.UStatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value", users.UStatusId);
            
             return View(users);
         }

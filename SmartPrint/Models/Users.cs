@@ -44,7 +44,7 @@ namespace SmartPrint.Models
 
         [DisplayName("Status")]
         public int UStatusId { get; set; }
-        public virtual UStatus UStatus { get; set; }
+        //public virtual UStatus UStatus { get; set; }
 
         [DisplayName("Added By")]
         public int AddedBy { get; set; }

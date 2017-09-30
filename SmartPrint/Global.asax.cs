@@ -4,6 +4,10 @@ using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Runtime.Caching;
+using SmartPrint.Common.Enums;
+using System;
+using SmartPrint.Common;
 
 namespace SmartPrint
 {
@@ -16,9 +20,12 @@ namespace SmartPrint
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Email;
 
-
+            MemoryCache.Default.Add(Constants.RecordStatusListName, EnumInfo.GetList<RecordStatus>(), DateTimeOffset.MaxValue);
+            MemoryCache.Default.Add(Constants.TransactionStatusListName, EnumInfo.GetList<TransactionStatus>(), DateTimeOffset.MaxValue);
+            MemoryCache.Default.Add(Constants.UserTypeListName, EnumInfo.GetList<UserType>(), DateTimeOffset.MaxValue);
+            MemoryCache.Default.Add(Constants.TransactionTypeListName, EnumInfo.GetList<TransactionType>(), DateTimeOffset.MaxValue);
             //For document viewer
-          //  DocuViewareManager.SetupConfiguration();
+            //  DocuViewareManager.SetupConfiguration();
             //025e99458a3c490ea0609e65f0b4f240bf35d80ee1283deeGx4ZcGz7zE8pzwYyLtCWhhqcW/TElpE8vdNooePcDI5/eFimqlbgw4626xZ5akP8
             //DocuViewareLicensing.RegisterKEY("025e99458a3c490ea0609e65f0b4f240bf35d80ee1283deeGx4ZcGz7zE8pzwYyLtCWhhqcW/TElpE8vdNooePcDI5/eFimqlbgw4626xZ5akP8"); 
             // Please enter your license key. Claim your free DocuVieware Lite license key here: http://www.docuvieware.com/docuvieware-lite/

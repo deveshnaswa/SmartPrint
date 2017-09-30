@@ -1,13 +1,13 @@
-﻿@model IEnumerable<SmartPrint.Models.UserTxns>
+﻿@model IEnumerable<SmartPrint.ViewModels.UserTransactionViewModel>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "User Transations";
 }
 
-<h2>Index</h2>
+<h2>User Transactions (Top up and print jobs)</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Top up user accounts", "Create")
 </p>
 <table class="table">
     <tr>
@@ -15,83 +15,48 @@
             @Html.DisplayNameFor(model => model.UserId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TTypes.TxnTypeName)
+            @Html.DisplayNameFor(model => model.TransactionTypeId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TxnAmount)
+            @Html.DisplayNameFor(model => model.TransactionAmount)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TxnDateTime)
+            @Html.DisplayNameFor(model => model.TransactionDateTime)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TxnBalance)
+            @Html.DisplayNameFor(model => model.TransactionBalance)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TxnRefJobId)
+            @Html.DisplayNameFor(model => model.TransactionReferenceJobId)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TxnStatus.StatusName)
-        </th>
-        @*<th>
-            @Html.DisplayNameFor(model => model.AddedBy)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AddedOn)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.EditedBy)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.EditedOn)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.StatusId)
-        </th>*@
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.UserId)
+            @Html.DisplayFor(modelItem => item.NameOfUser)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TTypes.TxnTypeName)
+            @Html.DisplayFor(modelItem => item.TransactionTypeName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TxnAmount)
+            @Html.DisplayFor(modelItem => item.TransactionAmount)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TxnDateTime)
+            @Html.DisplayFor(modelItem => item.TransactionDateTime)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TxnBalance)
+            @Html.DisplayFor(modelItem => item.TransactionBalance)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TxnRefJobId)
+            @if(item.TransactionReferenceJobId != 0) {
+                @Html.ActionLink(@item.TransactionReferenceJobId.ToString(),"Details","PrintJobs",new { id = item.TransactionReferenceJobId},new { })
+            }
+            
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TxnStatus.StatusName)
-        </td>
-        @*<td>
-            @Html.DisplayFor(modelItem => item.AddedBy)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AddedOn)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EditedBy)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EditedOn)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.StatusId)
-        </td>*@
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.TxnId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.TxnId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.TxnId })
+            @Html.ActionLink("Edit", "Edit", new { id=item.TransactionId })
         </td>
     </tr>
 }

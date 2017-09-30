@@ -13,28 +13,35 @@ namespace SmartPrint.Models
         [Key]
         public int TxnId { get; set; }
 
+        [Required]
         [DisplayName("User Name")]
         public int UserId { get; set; }
 
-    
+        [Required]
         [DisplayName("Transaction Type")]
         public int TxnTypeId { get; set; }
+
+
         [DisplayName("Transaction Type")]
         public virtual TTypes TTypes {get;set;}
 
+        [Required]
         [DisplayName("Transaction Amount")]
         public decimal TxnAmount { get; set; }
+
 
         [DisplayName("Transaction Date Time")]
         [DataType(DataType.DateTime)]
         [Column(TypeName = "DateTime2")]
         public DateTime TxnDateTime { get; set; }
 
+
         [DisplayName("Transaction Balance Amount")]
         public decimal TxnBalance { get; set; }
 
         [DisplayName("Reference Print Job")]
         public int TxnRefJobId { get; set; }
+
 
         [DisplayName("Transaction Status")]
         public int TxnStatusId { get; set; }

@@ -7,9 +7,8 @@
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
     <!--<link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />-->
     <link href="~/Content/flatly.bootstrap.css" rel="stylesheet" type="text/css" />
-    
+    <link rel="stylesheet" type="text/css" href="~/Content/typeahead.css" />
     <script src="~/Scripts/modernizr-2.6.2.js"></script>
-    @RenderSection("scripts", required: false)
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -78,7 +77,18 @@
         </footer>
     </div>
 
+    @RenderSection("scripts", required: false)
+    
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/typeahead.bundle.min.js"></script>
+    <script src="~/Scripts/typeahead.mvc.model.js"></script>
+    <script type="text/javascript">
+        $.validator.setDefaults({
+            ignore: []
+        });
+    </script>
 </body>
 </html>

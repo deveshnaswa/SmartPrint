@@ -1,8 +1,10 @@
 ﻿using SmartPrint.Models;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Runtime.Caching;
 using System.Web.Mvc;
 
 namespace SmartPrint.Controllers
@@ -36,7 +38,7 @@ namespace SmartPrint.Controllers
         // GET: UserTypes/Create
         public ActionResult Create()
         {
-            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+            ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value");
             return View();
         }
 
@@ -69,7 +71,7 @@ namespace SmartPrint.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName", userTypes.StatusId);
+            ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value", userTypes.StatusId);
             return View(userTypes);
         }
 

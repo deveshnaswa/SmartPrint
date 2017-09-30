@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using System.Drawing.Printing;
 using SmartPrint.Helpers;
+using System.Collections.Generic;
+using System.Runtime.Caching;
 
 namespace SmartPrint.Controllers
 {
@@ -21,7 +23,7 @@ namespace SmartPrint.Controllers
         {
 
             ViewBag.DocTypeId = new SelectList(db.DocTypes, "DocTypeId", "DocType");
-            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+            ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value");
             ViewBag.UserId = new SelectList(db.Users, "UserId", "UserId");
             return View(db.UserDocs.ToList());
         }
@@ -72,7 +74,8 @@ namespace SmartPrint.Controllers
         public ActionResult Create()
         {
             ViewBag.DocTypeId = new SelectList(db.DocTypes, "DocTypeId", "DocType");
-            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+            ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value");
+
             ViewBag.UserId = new SelectList(db.Users,"UserId","FName"+ " " +"LName");
            // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
 
@@ -191,9 +194,8 @@ namespace SmartPrint.Controllers
             {
                 return HttpNotFound();
             }
-           // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType", users.UserTypeId);
-            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName", userDocs.StatusId);
-           // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName", users.UStatusId);
+            ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value", userDocs.StatusId);
+
 
             return View(userDocs);
         }

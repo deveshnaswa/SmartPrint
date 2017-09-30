@@ -4,15 +4,12 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-using System.Management;
-using System.Security.Claims;
 using Microsoft.AspNet.Identity;
 using SmartPrint.CustomLibaries;
 using System.Collections.Generic;
-using System.Web;
 using SmartPrint.Common.Enums;
 using SmartPrint.Helpers;
-
+using System.Runtime.Caching;
 namespace SmartPrint.Controllers
 {
     public class PrintJobsController : Controller
@@ -65,9 +62,8 @@ namespace SmartPrint.Controllers
 
             ViewBag.PrinterName = new SelectList(Printer.GetPrinterList(),"Value","Text");
 
-            var recordStatusOptions = Enum.GetNames(typeof(RecordStatus)).
-                Select(o => new { Text = o, Value = (int)Enum.Parse(typeof(RecordStatus), o) });
-            ViewBag.StatusId = new SelectList(recordStatusOptions, "Value", "Text");
+            
+            ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int,string> , "Key", "Value");
 
             ViewBag.PrintCostId= new SelectList(db.PrintCosts, "PrintCostId", "Name");
             ViewBag.UserDocsId = userDocsToPrint.DocId;
@@ -227,12 +223,13 @@ namespace SmartPrint.Controllers
             ViewBag.PrinterName = new SelectList(Printer.GetPrinterList(),"Value","Text");
             var recordStatusOptions = Enum.GetNames(typeof(RecordStatus)).
                 Select(o => new { Text = o, Value = (byte)(Enum.Parse(typeof(RecordStatus), o)) });
-                ViewBag.StatusId = new SelectList(recordStatusOptions, "Value", "Text");
+
+                ViewBag.StatusId = EnumInfo.GetSelectListFromEnum<RecordStatus>();// new SelectList(recordStatusOptions, "Value", "Text");
 
             ViewBag.PrintCostId= new SelectList(db.PrintCosts, "PrintCostId", "Name");
             
             // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
-            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
+            //ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
             // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
 
            
@@ -254,7 +251,7 @@ namespace SmartPrint.Controllers
                 return HttpNotFound();
             }
             //ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType", users.UserTypeId);
-            ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName", printJobs.StatusId);
+            ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value",printJobs.StatusId);
             //ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName", users.UStatusId);
             return View(printJobs);
         }
@@ -366,6 +363,8 @@ namespace SmartPrint.Controllers
         /// The names of the documents within the library
         /// </summary>
         private string[] _documents;
+
+        public object Constatnts { get; private set; }
 
         /// <summary>
         /// This private method populates a string array with the library documents name.

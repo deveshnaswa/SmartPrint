@@ -8,6 +8,7 @@ using System.Runtime.Caching;
 using SmartPrint.Common.Enums;
 using System;
 using SmartPrint.Common;
+using SmartPrint.CustomLibaries;
 
 namespace SmartPrint
 {
@@ -24,6 +25,9 @@ namespace SmartPrint
             MemoryCache.Default.Add(Constants.TransactionStatusListName, EnumInfo.GetList<TransactionStatus>(), DateTimeOffset.MaxValue);
             MemoryCache.Default.Add(Constants.UserTypeListName, EnumInfo.GetList<UserType>(), DateTimeOffset.MaxValue);
             MemoryCache.Default.Add(Constants.TransactionTypeListName, EnumInfo.GetList<TransactionType>(), DateTimeOffset.MaxValue);
+            MemoryCache.Default.Add(Constants.DocumentTypeListName, EnumInfo.GetList<DocumentType>(), DateTimeOffset.MaxValue);
+            MemoryCache.Default.Add(Constants.PrintJobStatusListName, EnumInfo.GetList<PrintJobStatus>(), DateTimeOffset.MaxValue);
+            MemoryCache.Default.Add(Constants.PrinterListName, PrinterHelper.GetPrintersWithProperties(), DateTimeOffset.MaxValue);
             //For document viewer
             //  DocuViewareManager.SetupConfiguration();
             //025e99458a3c490ea0609e65f0b4f240bf35d80ee1283deeGx4ZcGz7zE8pzwYyLtCWhhqcW/TElpE8vdNooePcDI5/eFimqlbgw4626xZ5akP8

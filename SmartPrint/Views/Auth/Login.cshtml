@@ -3,17 +3,32 @@
     ViewBag.Title = "Login";
 }
 
-<h2>Login</h2>
-
-@Html.ValidationSummary(true)
+<div class="row">
+    <div class="col-md-offset-2 col-md-10">
+        <h2>Login to LMS</h2>
+    </div>
+</div>
 @using (Html.BeginForm())
 {
-    @Html.LabelFor(u=> u.UserEmail) <br/>
-    @Html.TextBoxFor(u => u.UserEmail) <br />
-    @Html.LabelFor(u=> u.UserPass) <br/>
-    @Html.PasswordFor(u=> u.UserPass) <br/>
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true)
+        <div class="form-group">
+            @Html.LabelFor(u => u.UserEmail, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(u => u.UserEmail, new { @class = "form-control" })
+            </div>
+        </div>
 
-    <p>
-        <button type="submit">Log In</button>
-    </p>
+        <div class="form-group">
+            @Html.LabelFor(u => u.UserPass, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.PasswordFor(u => u.UserPass, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" class="btn btn-primary">Log In</button>
+            </div>
+        </div>
+    </div>
 }

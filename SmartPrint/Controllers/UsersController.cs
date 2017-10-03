@@ -1,4 +1,5 @@
-﻿using SmartPrint.CustomLibraries;
+﻿using SmartPrint.Common.Filters;
+using SmartPrint.CustomLibraries;
 using SmartPrint.Helpers.User;
 using SmartPrint.Models;
 using System;
@@ -13,23 +14,36 @@ namespace SmartPrint.Controllers
 {
     public class UsersController : Controller
     {
-        private MainDbContext db = new MainDbContext();
+        MainDbContext _dbContext;
+        UserHelper _userHelper;
 
-       
+        public UsersController():this(new MainDbContext())   
+        {
+
+        }
+        public UsersController(MainDbContext db):this(db,new UserHelper(db))
+        {
+
+        }
+
+        public UsersController(MainDbContext db, UserHelper userHelper)
+        {
+            _dbContext = db;
+            _userHelper = userHelper;
+        }
+
         public ActionResult Index()
         {
-            return View(db.Users.ToList());
+            return View(_dbContext.Users.ToList());
         }
         public ActionResult IndexSearch(string id)
         {
-            var userHelper = new UserHelper(db);
-            var result = userHelper.SearchUsers(id);
+            var result = _userHelper.SearchUsers(id);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
         public ActionResult SearchUsers(string query)
         {
-            var userHelper = new UserHelper(db);
-            var result = userHelper.SearchUsers(query).Select(x => new Autocomplete() {Id = x.UserId, Name = x.Name });
+            var result = _userHelper.SearchUsers(query).Select(x => new Autocomplete() {Id = x.UserId, Name = x.Name });
             return Json(result, JsonRequestBehavior.AllowGet);
         }
         // GET: Users/Details/5
@@ -39,7 +53,7 @@ namespace SmartPrint.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Users users = db.Users.Find(id);
+            Users users = _dbContext.Users.Find(id);
             if (users == null)
             {
                 return HttpNotFound();
@@ -48,6 +62,7 @@ namespace SmartPrint.Controllers
         }
 
         // GET: Users/Create
+        [AdminAuthorizationFilter]
         public ActionResult Create()
         {
             ViewBag.UserTypeId = new SelectList(MemoryCache.Default.Get(Common.Constants.UserTypeListName) as Dictionary<int, string>, "Key", "Value");
@@ -70,8 +85,8 @@ namespace SmartPrint.Controllers
                 users.UserPass = encryptedPassword;
 
                 //users.RowStatus = 1;
-                db.Users.Add(users);
-                db.SaveChanges();
+                _dbContext.Users.Add(users);
+                _dbContext.SaveChanges();
                 return RedirectToAction("Index");
             }
            // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType", users.UserTypeId);
@@ -85,7 +100,7 @@ namespace SmartPrint.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Users users = db.Users.Find(id);
+            Users users = _dbContext.Users.Find(id);
 
             if (users == null)
             {
@@ -93,7 +108,7 @@ namespace SmartPrint.Controllers
             }
             var decryptPassword = CustomDecrypt.Decrypt(users.UserPass);
             users.UserPass = decryptPassword;
-            ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType",users.UserTypeId);
+            ViewBag.UserTypeId = new SelectList(_dbContext.UserTypes, "UserTypeId", "UserType",users.UserTypeId);
             ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value",users.StatusId);
             ViewBag.UStatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value", users.UStatusId);
            
@@ -109,13 +124,13 @@ namespace SmartPrint.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(users).State = EntityState.Modified;
+                _dbContext.Entry(users).State = EntityState.Modified;
                 var encryptedPassword = CustomEnrypt.Encrypt(users.UserPass);
                 users.UserPass = encryptedPassword;
-                db.Entry(users).Property(uco => uco.AddedBy).IsModified = false;
-                db.Entry(users).Property(uco => uco.AddedOn).IsModified = false;
+                _dbContext.Entry(users).Property(uco => uco.AddedBy).IsModified = false;
+                _dbContext.Entry(users).Property(uco => uco.AddedOn).IsModified = false;
                 
-                db.SaveChanges();
+                _dbContext.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(users);
@@ -128,7 +143,7 @@ namespace SmartPrint.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Users users = db.Users.Find(id);
+            Users users = _dbContext.Users.Find(id);
             if (users == null)
             {
                 return HttpNotFound();
@@ -144,11 +159,11 @@ namespace SmartPrint.Controllers
 
             try
             {
-                Users users = db.Users.Find(id);
+                Users users = _dbContext.Users.Find(id);
                 users.StatusId = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
-                db.Entry(users).State = EntityState.Modified;
+                _dbContext.Entry(users).State = EntityState.Modified;
                 //db.Users.Remove(users);
-                db.SaveChanges();
+                _dbContext.SaveChanges();
                 return RedirectToAction("Index");
 
 
@@ -165,7 +180,7 @@ namespace SmartPrint.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _dbContext.Dispose();
             }
             base.Dispose(disposing);
         }

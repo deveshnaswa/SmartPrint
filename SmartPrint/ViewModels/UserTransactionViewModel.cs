@@ -84,7 +84,7 @@ namespace SmartPrint.ViewModels
         public string NameOfUser { get; set; }
         public string TransactionTypeName { get; set; }
 
-        internal void ChangeDbObjectForUpdate(UserTxns userTransactionToEdit, int loggedInUserId,DateTime updatedOn)
+        public void ChangeDbObjectForUpdate(UserTxns userTransactionToEdit, int loggedInUserId,DateTime updatedOn)
         {
             userTransactionToEdit.UserId = UserId;
             var amountDifference = TransactionAmount - userTransactionToEdit.TxnAmount;

@@ -10,16 +10,36 @@ using System.Collections.Generic;
 using SmartPrint.Common.Enums;
 using SmartPrint.Helpers;
 using System.Runtime.Caching;
+using SmartPrint.Helpers.User;
+using SmartPrint.ViewModels;
+using System.Web;
+using SmartPrint.Controllers.Base;
+
 namespace SmartPrint.Controllers
 {
-    public class PrintJobsController : Controller
+    public class PrintJobsController : SmartPrintBaseController
     {
-        private MainDbContext db = new MainDbContext();
+        MainDbContext DbContext;
+        UserHelper _userHelper;
+
+        public PrintJobsController() : this(new MainDbContext())
+        {
+
+        }
+        public PrintJobsController(MainDbContext dbContext):this(dbContext, new UserHelper(dbContext))
+        {
+
+        }
+        public PrintJobsController(MainDbContext dbContext, UserHelper userHelper)
+        {
+            DbContext = dbContext;
+            _userHelper = userHelper;
+        }
 
         // GET: PrintJobs
         public ActionResult Index()
         {
-            return View(db.PrintJobs.ToList());
+            return View(DbContext.PrintJobs.ToList());
         }
 
         // GET: PrintJobs/Details/5
@@ -29,7 +49,7 @@ namespace SmartPrint.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            PrintJobs printJobs = db.PrintJobs.Find(id);
+            PrintJobs printJobs = DbContext.PrintJobs.Find(id);
             if (printJobs == null)
             {
                 return HttpNotFound();
@@ -40,39 +60,31 @@ namespace SmartPrint.Controllers
         // GET: PrintJobs/Create
         public ActionResult Create(int? id)
         {
-
-            PrintJobs model = new PrintJobs();
-
-            UserDocs userDocsToPrint = db.UserDocs.Find(id);
-
-            //ViewBag.UserDocsToPrint = userDocsToPrint;
-            //model.JobId = userDocsToPrint
-            model.UserId = int.Parse(User.Identity.GetUserId());
-            model.DocId = userDocsToPrint.DocId;
-            model.DocName = userDocsToPrint.DocName;
-            model.DocTypeId = userDocsToPrint.DocTypeId;
-            model.DocExt = userDocsToPrint.DocExt;
-            model.DocFileNameOnServer =userDocsToPrint.DocFileName;
-            model.DocFilePath = userDocsToPrint.DocFilePath;
-            ViewBag.TotalPages = getTotalPagesByDoc(userDocsToPrint.DocFilePath);
-            ViewBag.Document = new Document(userDocsToPrint.DocFileName, userDocsToPrint.DocFilePath);
-
-         
-
-
-            ViewBag.PrinterName = new SelectList(Printer.GetPrinterList(),"Value","Text");
-
             
-            ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int,string> , "Key", "Value");
+            UserDocs userDocsToPrint = DbContext.UserDocs.FirstOrDefault(x=>x.DocId == id);
+            if (userDocsToPrint == null)
+            {
+                return HttpNotFound();
+            }
+            var model = new PrintJobsViewModel();
+            var printCost = DbContext.PrintCosts.FirstOrDefault();
+            model.DocumentId = userDocsToPrint.DocId;
+            model.DocumentName = userDocsToPrint.DocName;
+            model.ColorUnitcost = printCost.ColorCostPerPage;
+            model.MonoUnitcost = printCost.MonoCostPerPage;
 
-            ViewBag.PrintCostId= new SelectList(db.PrintCosts, "PrintCostId", "Name");
-            ViewBag.UserDocsId = userDocsToPrint.DocId;
+            var totalNoOfPages = getTotalPagesByDoc(userDocsToPrint.DocFilePath);
+            model.PagesFrom = 1;
+            model.PagesTo = totalNoOfPages;
+            model.TotalPageCount = totalNoOfPages;
+            model.TotalPageCost = totalNoOfPages * model.MonoUnitcost;
+            model.NumCopies = 1;
 
-            // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
-            //ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
-            // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
+            ViewBag.TotalPages = totalNoOfPages;
+            ViewBag.DocumentPath = $"\\{GetUploadFolderName()}\\{userDocsToPrint.DocFileName}";
+            ViewBag.MimeMappings = MimeMapping.GetMimeMapping(userDocsToPrint.DocName);
+            ViewBag.PrinterList = MemoryCache.Default.Get(Common.Constants.PrinterListName) as Dictionary<string, PrinterDetails>;
 
-           
             return View(model);
         }
 
@@ -80,162 +92,108 @@ namespace SmartPrint.Controllers
         // POST: PrintJobs/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         //public ActionResult Create([Bind(Include = "JobId,UserId,DocId,DocName,DocTypeId,DocExt,DocFileNameOnServer,DocFilePath,DocTotalPages,PrintcostId,MonoPages,ColorPages,IsColor,IsDuplex,IsCollate,UnitCost,MonoUnitcost,ColorUnitcost,UnitItem,JobRemarks,PrintJobQueueRefId,PagesFrom,PagesTo,NumCopies,TotalPageCount,TotalPageCost,CreditUsed,JobError,JobErrorRemarks,PrinterName,PrinterPath,JobStatusId,AddedBy,AddedOn,EditedBy,EditedOn,StatusId")] PrintJobs printJobs)
-        public ActionResult Create(PrintJobs printJobs)
+        public ActionResult Create(PrintJobsViewModel printJob)
         {
-
-            int jtotalpage;
-
-            int ReferenceJobId = 0;
-            UserTxns userTransaction = new UserTxns();
-
-            // get transaction balance of the user for checking credit score
-            decimal jTxnBalance = 0;
-            // get user info
-            int jPageFrom,jPageTo,jCopiesToPrint,jTotalPageToPrint ;
-            decimal jMonoColorCostPerPage ,jcolorcostperpage, jPrintingCostTotal;
-
-            // get printing job info as set up by user
-            bool jColorprint, jDuplexPrint = false;
-
-            var result = db.UserTxns
-                .Where(tx => tx.UserId== printJobs.UserId)   // Filter
-                .OrderByDescending(tx => tx.TxnId) // prioritet is still here - order by it
-                .FirstOrDefault();  // Now grab the transaction balance
-            
-            if (result != null)
-            {
-                jTxnBalance = result.TxnBalance;
-            }
-            
-            if (jTxnBalance > 0)
-            {
-                /// make calculations based on the data received
-                /// throw error if any 
-
-                // get user info
-                 jPageFrom = printJobs.PagesFrom;
-                 jPageTo = printJobs.PagesTo;
-                 jCopiesToPrint = printJobs.NumCopies;
-                 jTotalPageToPrint = (jPageTo - jPageFrom + 1) * jCopiesToPrint;
-
-                 jPrintingCostTotal = 0;
-
-                // get printing cost info
-                PrintCosts printCost = db.PrintCosts.Find(printJobs.PrintcostId);
-                 jMonoColorCostPerPage = printCost.MonoCostPerPage;
-                 jcolorcostperpage = printCost.ColorCostPerPage;
-
-                // get printing job info as set up by user
-                 jColorprint = printJobs.IsColor;
-                if (jColorprint)
-                {
-
-                    jPrintingCostTotal = jTotalPageToPrint * jcolorcostperpage;
-                }
-                else
-                {
-                    jPrintingCostTotal = jTotalPageToPrint * jMonoColorCostPerPage;
-                }
-
-                 jDuplexPrint = printJobs.IsDuplex;
-
-                ///TODO 
-                /// ADD LOGIC FOR DUPLEX PRINTING
-
-                printJobs.TotalPageCount = jTotalPageToPrint;
-                printJobs.TotalPageCost = jPrintingCostTotal;
-                
-                printJobs.CreditUsed = jPrintingCostTotal;
-                    
-
-                
-
-                if (jTxnBalance >= jPrintingCostTotal)
-                {
-
-                    //return success
-                    //update database for printjob tabale.
-                    // update user transaction table.
-                    userTransaction.UserId = printJobs.UserId;
-                    userTransaction.TxnTypeId = 1;
-                    userTransaction.TxnAmount = jPrintingCostTotal;
-                    userTransaction.TxnDateTime = DateTime.Now;
-                    userTransaction.TxnBalance = jTxnBalance - jPrintingCostTotal;
-                    //userTransaction.TxnRefJobId = jPrintJobRefId;
-                    userTransaction.TxnStatusId = 0;
-                    userTransaction.StatusId = 1;
-
-                    //send document to print ->job
-                    //print
-                    var printSettings = new PrintFileSettings()
-                    {
-                        Copies = Convert.ToInt16(printJobs.NumCopies),
-                        StartPage = printJobs.PagesFrom,
-                        EndPage = printJobs.PagesTo,
-                        FilePath = printJobs.DocFilePath,
-                        PrinterName = printJobs.PrinterName,
-                        IsDuplex = printJobs.IsDuplex,
-                        IsColored = printJobs.IsColor
-                    };
-                    var printHelper = new PrintHelper();
-
-                    ReferenceJobId = Int32.Parse(printHelper.PrintFile(printSettings));
-                    //jtotalpage = Int32.Parse(printHelper.GetPrintFileTotalPages(printSettings));
-
-
-                }
-                else
-                {
-                    // return you do not have enough credits.
-                    ModelState.AddModelError("Credits Insufficient","Your credit balance is very less");
-                }
-                //UserDocs userDocs = db.UserDocs.Find(id);
-
-            }
-            else
-            {
-                ModelState.AddModelError("Credits Insufficient", "Your credit balance is very less");
-            }
-
-            
-
             if (ModelState.IsValid)
             {
-                //insert printjobs
-                printJobs.PrintJobQueueRefId =ReferenceJobId;
-                //printJobs.TotalPageCount = jtotalpage;
-                db.PrintJobs.Add(printJobs);
-                db.SaveChanges();
-                var refprintjobid = printJobs.JobId;
-                userTransaction.TxnRefJobId = refprintjobid;
-                //// insert user transaction table
-                db.UserTxns.Add(userTransaction);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                var IsUserHasSufficentCreditForPrintJob = false;
+                var loggedinUserId = GetLoggedInUserId();
+                var lastTransaction = DbContext.UserTxns
+                    .Where(tx => tx.UserId == loggedinUserId && tx.StatusId != (int)RecordStatus.Deleted)   // Filter
+                    .OrderByDescending(tx => tx.TxnId) // prioritet is still here - order by it
+                    .FirstOrDefault();  // Now grab the transaction balance
+
+                if (lastTransaction != null)
+                {
+                    var printCost = DbContext.PrintCosts.FirstOrDefault();
+                    var totalPageToPrint = Math.Abs(printJob.PagesTo - printJob.PagesFrom) + 1;
+                    var currentJobCost = printJob.TotalPageCost;
+                    if (printJob.IsColor)
+                    {
+                        currentJobCost = totalPageToPrint * printCost.ColorCostPerPage * printJob.NumCopies;
+                    }
+                    else
+                    {
+                        currentJobCost = totalPageToPrint * printCost.MonoCostPerPage * printJob.NumCopies;
+                    }
+                    IsUserHasSufficentCreditForPrintJob = lastTransaction.TxnBalance >= currentJobCost;
+                    if (IsUserHasSufficentCreditForPrintJob)
+                    {
+                        var now = DateTimeHelper.GetTimeStamp();
+                        UserTxns userTransaction = new UserTxns();
+                        //return success
+                        //update database for printjob tabale.
+                        // update user transaction table.
+                        userTransaction.UserId = GetLoggedInUserId();
+                        userTransaction.TxnTypeId = (int) TransactionType.Debit;
+                        userTransaction.TxnAmount = currentJobCost;
+                        userTransaction.TxnBalance = lastTransaction.TxnBalance - currentJobCost;
+                        //userTransaction.TxnRefJobId = jPrintJobRefId;
+                        userTransaction.TxnStatusId = (int)TransactionStatus.Pending;
+                        userTransaction.StatusId = (int)RecordStatus.Active;
+
+                        var documentToPrint = DbContext.UserDocs.FirstOrDefault(x => x.DocId == printJob.DocumentId);
+                        //send document to print ->job
+                        //print
+                        var printSettings = new PrintFileSettings()
+                        {
+                            Copies = (short)printJob.NumCopies,
+                            StartPage = printJob.PagesFrom,
+                            EndPage = printJob.PagesTo,
+                            FilePath = documentToPrint.DocFilePath,
+                            PrinterName = printJob.PrinterName,
+                            IsDuplex = printJob.IsDuplex,
+                            IsColored = printJob.IsColor
+                        };
+                        var printHelper = new PrintHelper();
+                        var referenceJobId = Int32.Parse(printHelper.PrintFile(printSettings));
+
+                        var printJobToAdd = printJob.GetDbObjectToCreate(documentToPrint,referenceJobId, GetLoggedInUserId());
+                        //insert printjobs
+                        //printJobs.TotalPageCount = jtotalpage;
+                        DbContext.PrintJobs.Add(printJobToAdd);
+                        DbContext.SaveChanges();
+                        userTransaction.TxnRefJobId = printJobToAdd.JobId;
+                        //// insert user transaction table
+                        DbContext.UserTxns.Add(userTransaction);
+                        DbContext.SaveChanges();
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Your credit balance is not sufficient. Please get it topped up.");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Your credit balance is not sufficient. Please get it topped up.");
+                }
             }
-            else
+            if (!ModelState.IsValid)
             {
-            
+                UserDocs userDocsToPrint = DbContext.UserDocs.FirstOrDefault(x => x.DocId == printJob.DocumentId);
+                if (userDocsToPrint == null)
+                {
+                    return HttpNotFound();
+                }
+                var printCost = DbContext.PrintCosts.FirstOrDefault();
+                
+                printJob.ColorUnitcost = printCost.ColorCostPerPage;
+                printJob.MonoUnitcost = printCost.MonoCostPerPage;
 
-            ViewBag.PrinterName = new SelectList(Printer.GetPrinterList(),"Value","Text");
-            var recordStatusOptions = Enum.GetNames(typeof(RecordStatus)).
-                Select(o => new { Text = o, Value = (byte)(Enum.Parse(typeof(RecordStatus), o)) });
-
-                ViewBag.StatusId = EnumInfo.GetSelectListFromEnum<RecordStatus>();// new SelectList(recordStatusOptions, "Value", "Text");
-
-            ViewBag.PrintCostId= new SelectList(db.PrintCosts, "PrintCostId", "Name");
-            
-            // ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "UserType");
-            //ViewBag.StatusId = new SelectList(db.RStatus, "StatusId", "StatusName");
-            // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
-
-           
+                var totalNoOfPages = getTotalPagesByDoc(userDocsToPrint.DocFilePath);
+                printJob.TotalPageCount = totalNoOfPages;
+                
+                ViewBag.TotalPages = totalNoOfPages;
+                ViewBag.DocumentPath = $"\\{GetUploadFolderName()}\\{userDocsToPrint.DocFileName}";
+                ViewBag.MimeMappings = MimeMapping.GetMimeMapping(userDocsToPrint.DocName);
+                ViewBag.PrinterList = MemoryCache.Default.Get(Common.Constants.PrinterListName) as Dictionary<string, PrinterDetails>;
+                return View(printJob);
             }
-            
-            return View(printJobs);
+            return RedirectToAction("Index");
         }
 
         // GET: PrintJobs/Edit/5
@@ -245,7 +203,7 @@ namespace SmartPrint.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            PrintJobs printJobs = db.PrintJobs.Find(id);
+            PrintJobs printJobs = DbContext.PrintJobs.Find(id);
             if (printJobs == null)
             {
                 return HttpNotFound();
@@ -265,10 +223,10 @@ namespace SmartPrint.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(printJobs).State = EntityState.Modified;
-                db.Entry(printJobs).Property(uco => uco.AddedBy).IsModified = false;
-                db.Entry(printJobs).Property(uco => uco.AddedOn).IsModified = false;
-                db.SaveChanges();
+                DbContext.Entry(printJobs).State = EntityState.Modified;
+                DbContext.Entry(printJobs).Property(uco => uco.AddedBy).IsModified = false;
+                DbContext.Entry(printJobs).Property(uco => uco.AddedOn).IsModified = false;
+                DbContext.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(printJobs);
@@ -281,7 +239,7 @@ namespace SmartPrint.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            PrintJobs printJobs = db.PrintJobs.Find(id);
+            PrintJobs printJobs = DbContext.PrintJobs.Find(id);
             if (printJobs == null)
             {
                 return HttpNotFound();
@@ -297,11 +255,11 @@ namespace SmartPrint.Controllers
 
             try
             {
-                PrintJobs printJobs = db.PrintJobs.Find(id);
+                PrintJobs printJobs = DbContext.PrintJobs.Find(id);
                 printJobs.StatusId = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
-                db.Entry(printJobs).State = EntityState.Modified;
+                DbContext.Entry(printJobs).State = EntityState.Modified;
                 //db.Users.Remove(users);
-                db.SaveChanges();
+                DbContext.SaveChanges();
                 return RedirectToAction("Index");
 
 
@@ -319,7 +277,7 @@ namespace SmartPrint.Controllers
 
         public ActionResult GetPrintCosts(int PrintCostId)
         {
-            var printCost = db.PrintCosts.Where(c => c.PrintCostId== PrintCostId);
+            var printCost = DbContext.PrintCosts.Where(c => c.PrintCostId== PrintCostId);
             
             return Json(printCost, JsonRequestBehavior.AllowGet);
         }
@@ -328,10 +286,9 @@ namespace SmartPrint.Controllers
 
         public ActionResult GetPrinterProperties(string PrinterSelected)
         {
-            var printerprops = Printer.GetPrinterPropertiesList(PrinterSelected);
-           //var printerQueuesdJobs = Printer.GetPrintJobsCollection(PrinterSelected,7,"287.pdf",10);
-
-            return Json(printerprops, JsonRequestBehavior.AllowGet);
+            var printerList = MemoryCache.Default.Get(Common.Constants.PrinterListName) as Dictionary<string, PrinterDetails>;
+            var printerprops = printerList[PrinterSelected];
+           return Json(printerprops, JsonRequestBehavior.AllowGet);
         }
 
 
@@ -339,7 +296,7 @@ namespace SmartPrint.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                DbContext.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -395,7 +352,7 @@ namespace SmartPrint.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UserDocs userDocs = db.UserDocs.Find(UserDocId);
+            UserDocs userDocs = DbContext.UserDocs.Find(UserDocId);
             //PopulateLibrary();
             ViewBag.Library = _documents;
             if (userDocs != null)

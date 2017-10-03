@@ -135,6 +135,8 @@ namespace SmartPrint.Helpers
                         printDocument.DefaultPageSettings = pageSettings;
                         printDocument.DocumentName = Path.GetFileName(settings.FilePath);
                         printDocument.PrintController = new StandardPrintController();
+                        //printDocument.
+                        printDocument.EndPrint += PrintDocument_EndPrint;
                         if (printDocument.PrinterSettings.SupportsColor)
                         {
                             if (settings.IsDuplex)
@@ -161,6 +163,13 @@ namespace SmartPrint.Helpers
             {
                 return "error";
             }
+        }
+
+        private void PrintDocument_EndPrint(object sender, PrintEventArgs e)
+        {
+            string abd = "cdf";
+            //-		sender	{[PrintDocument 190d82a7-58d4-444e-9336-051bc6487258.pdf]}	object {PdfiumViewer.PdfPrintDocument}
+
         }
 
         private string setRefJobId(string fileName,string printerName )

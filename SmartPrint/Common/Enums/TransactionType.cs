@@ -9,5 +9,4 @@ namespace SmartPrint.Common.Enums
         [Description("Debit")]
         Debit = 2
     }
-
 }

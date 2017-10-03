@@ -141,5 +141,11 @@ namespace SmartPrint.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ActionResult Unauthorised()
+        {
+            return View();
+        }
+
     }
 }

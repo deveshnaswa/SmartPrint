@@ -5,45 +5,65 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using System.Collections.Generic;
-using System.Runtime.Caching;
 using SmartPrint.Helpers.User;
 using SmartPrint.ViewModels;
 using SmartPrint.Common.Enums;
 using SmartPrint.Controllers.Base;
-using System.Linq.Expressions;
 using SmartPrint.Helpers;
+using SmartPrint.Common.Filters;
 
 namespace SmartPrint.Controllers
 {
     public class UserTxnsController : SmartPrintBaseController
     {
+        MainDbContext DbContext;
+        UserHelper _userHelper;
+
         public UserTxnsController() : this(new MainDbContext())
         {
 
         }
-        public UserTxnsController(MainDbContext dbContext)
+        public UserTxnsController(MainDbContext dbContext):this(dbContext, new UserHelper(dbContext))
+        {
+            
+        }
+        public UserTxnsController(MainDbContext dbContext, UserHelper userHelper)
         {
             DbContext = dbContext;
+            _userHelper = userHelper;
         }
-        private MainDbContext DbContext;
+        
 
         // GET: UserTxns
-        public ActionResult Index(string userName = "", int pageNo = 1, int pageSize = 10)
+        public ActionResult Index(string SearchTerm = "", int pageNo = 1, int pageSize = 10)
         {
             IEnumerable<UserTxns> resultsToConsider = DbContext.UserTxns;
-            var userHelper = new UserHelper(DbContext);
-            if (userName.Trim() != string.Empty)
+            if (!IsUserAdmin())
             {
-                var userIds = userHelper.GetAllUsers().Where(x => x.SearchName.Contains(userName.ToLower())).Select(x => x.UserId).ToList();
-                resultsToConsider = resultsToConsider.Where(x => userIds.Contains(x.UserId));
+                resultsToConsider = resultsToConsider.Where(x => x.UserId == GetLoggedInUserId());
             }
+            else
+            {
+                if (SearchTerm.Trim() != string.Empty && IsUserAdmin())
+                {
+                    var userIds = _userHelper.GetAllUsers().Where(x => x.SearchName.Contains(SearchTerm.ToLower())).Select(x => x.UserId).ToList();
+                    resultsToConsider = resultsToConsider.Where(x => userIds.Contains(x.UserId));
+                }
+            }
+            
             var resultFromDb = resultsToConsider.OrderByDescending(x => x.TxnDateTime).Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
-            var resultToSend = resultFromDb.Select(x => new UserTransactionViewModel(x, userHelper,EnumInfo.GetList<TransactionType>()));
+            var resultToSend = resultFromDb.Select(x => new UserTransactionViewModel(x, _userHelper,EnumInfo.GetList<TransactionType>()));
+            ViewBag.SearchTerm = SearchTerm;
             return View(resultToSend);
         }
 
-        
+        [HttpPost]
+        public ActionResult Index(string SearchTerm = "")
+        {
+            return Index(SearchTerm,1,10);
+        }
         // GET: UserTxns/Create
+        [AdminAuthorizationFilter]
         public ActionResult Create()
         {
             return View();
@@ -54,6 +74,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AdminAuthorizationFilter]
         public ActionResult Create(UserTransactionViewModel userTransaction)
         {
             if (ModelState.IsValid)
@@ -67,8 +88,7 @@ namespace SmartPrint.Controllers
                 return RedirectToAction("Index");
             }
 
-            var userHelper = new UserHelper(DbContext);
-            ViewBag.Users = new SelectList(userHelper.GetAllUsers(), "UserId", "Name");
+            ViewBag.Users = new SelectList(_userHelper.GetAllUsers(), "UserId", "Name");
             return View(userTransaction);
         }
 
@@ -109,6 +129,7 @@ namespace SmartPrint.Controllers
         }
 
         // GET: UserTxns/Edit/5
+        [AdminAuthorizationFilter]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -121,8 +142,7 @@ namespace SmartPrint.Controllers
                 return HttpNotFound();
             }
 
-            var userHelper = new UserHelper(DbContext);
-            var viewModel = new UserTransactionViewModel(userTransactionToEdit, userHelper, EnumInfo.GetList<TransactionType>());
+            var viewModel = new UserTransactionViewModel(userTransactionToEdit, _userHelper, EnumInfo.GetList<TransactionType>());
             return View(viewModel);
         }
 
@@ -131,6 +151,7 @@ namespace SmartPrint.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AdminAuthorizationFilter]
         public ActionResult Edit(UserTransactionViewModel transactionDetails)
         {
             if (ModelState.IsValid)
@@ -152,6 +173,7 @@ namespace SmartPrint.Controllers
         }
 
         // GET: UserTxns/Delete/5
+        [AdminAuthorizationFilter]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -169,6 +191,7 @@ namespace SmartPrint.Controllers
         // POST: UserTxns/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [AdminAuthorizationFilter]
         public ActionResult DeleteConfirmed(int id)
         {
 

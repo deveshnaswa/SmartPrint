@@ -3,265 +3,101 @@ using System;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
-using System.Drawing.Printing;
-using SmartPrint.Helpers;
 using System.Collections.Generic;
-using System.Runtime.Caching;
+using SmartPrint.Controllers.Base;
+using SmartPrint.Helpers.User;
+using SmartPrint.ViewModels;
 
 namespace SmartPrint.Controllers
 {
-    public class UserDocsController : Controller
+    public class UserDocsController : SmartPrintBaseController
     {
-        private MainDbContext db = new MainDbContext();
+        MainDbContext DbContext;
+        UserHelper _userHelper;
 
-        // GET: UserDocs
-        public ActionResult Index()
+        public UserDocsController() : this(new MainDbContext())
         {
 
-            ViewBag.DocTypeId = new SelectList(db.DocTypes, "DocTypeId", "DocType");
-            ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value");
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "UserId");
-            return View(db.UserDocs.ToList());
         }
-        /*
-        [HttpGet]
-        public ActionResult UploadFile()
+        public UserDocsController(MainDbContext dbContext):this(dbContext, new UserHelper(dbContext))
         {
-            return View();
+
+        }
+        public UserDocsController(MainDbContext dbContext, UserHelper userHelper)
+        {
+            DbContext = dbContext;
+            _userHelper = userHelper;
+        }
+        
+        // GET: UserDocs
+        public ActionResult Index(string SearchTerm = "", int pageNo = 1, int pageSize = 10)
+        {
+            IEnumerable<UserDocs> resultsToConsider = DbContext.UserDocs;
+            if (!IsUserAdmin())
+            {
+                resultsToConsider = resultsToConsider.Where(x => x.UserId == GetLoggedInUserId());
+            }
+            else
+            {
+                if (SearchTerm.Trim() != string.Empty && IsUserAdmin())
+                {
+                    var userIds = _userHelper.GetAllUsers().Where(x => x.SearchName.Contains(SearchTerm.ToLower())).Select(x => x.UserId).ToList();
+                    resultsToConsider = resultsToConsider.Where(x => userIds.Contains(x.UserId));
+                }
+            }
+            var resultFromDb = resultsToConsider.OrderByDescending(x => x.DocCreatedDate).Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
+            var resultToSend = resultFromDb.Select(x => new UserDocsViewModel(x, _userHelper));
+            ViewBag.SearchTerm = SearchTerm;
+            return View(resultToSend);
         }
         [HttpPost]
-        public ActionResult UploadFile(HttpPostedFileBase file)
+        public ActionResult Index(string SearchTerm = "")
         {
-            try
-            {
-                if (file.ContentLength > 0)
-                {
-                    string _FileName = Path.GetFileName(file.FileName);
-                    string _path = Path.Combine(Server.MapPath("~/UserFileUploads"), _FileName);
-                    file.SaveAs(_path);
-                }
-                ViewBag.Message = "File Uploaded Successfully!!";
-                return View();
-            }
-            catch
-            {
-                ViewBag.Message = "File upload failed!!";
-                return View();
-            }
+            return Index(SearchTerm, 1, 10);
         }
-        */
-
-        // GET: UserDocs/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UserDocs userDocs = db.UserDocs.Find(id);
-            if (userDocs == null)
-            {
-                return HttpNotFound();
-            }
-            return View(userDocs);
-        }
-
-        // GET: UserDocs/Create
         public ActionResult Create()
         {
-            ViewBag.DocTypeId = new SelectList(db.DocTypes, "DocTypeId", "DocType");
-            ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value");
-
-            ViewBag.UserId = new SelectList(db.Users,"UserId","FName"+ " " +"LName");
-           // ViewBag.UStatusId = new SelectList(db.UStatus, "UStatusId", "UStatusName");
-
             return View();
         }
 
-        // POST: UserDocs/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(UserDocs userDocs, HttpPostedFileBase file)
+        public ActionResult Create(UserDocsViewModel userDocs)
         {
-
-            /*
-             * 
-            if (ModelState.IsValid)
+            var allErrors = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage).ToList();
+            var isModelPartiallyValid = true;
+            if (allErrors.Count > 0)
             {
-                var allowedExtensions = new[] { ".pdf", ".zip", ".rar" };
-                var checkextension = Path.GetExtension(file.FileName).ToLower();
-
-                if (!allowedExtensions.Contains(checkextension))
-                {
-                    TempData["notice"] = "Select pdf or zip or rar less than 20Μ";
-                }
-
-                foreach (var itm in allowedExtensions)
-                {
-                    if (itm.Contains(checkextension))
-                    {
-                        db.announcement.Add(announcement);
-                        dbo.SaveChanges();
-                    }
-                }
-
-                if (file != null && file.ContentLength > 0)
-                {
-                    foreach (var itm in allowedExtensions)
-                    {
-                        if (itm.Contains(checkextension))
-                        {
-                            var extension = Path.GetExtension(file.FileName);
-                            var path = Path.Combine(Server.MapPath("~/Content/AnnFiles/" + "announcement_" + announcement.anak_ID + extension));
-
-                            //save File
-                            file.SaveAs(path);
-
-                            //prepere announcement
-                            announcement.file = @"announcement_" + announcement.anak_ID + extension;
-
-
-                            //Code for Save data to announcement.
-
-                            db.SaveChanges();
-                            TempData["notice"] = "OK! the file is uploaded";
-                        }
-                    }
-
-                }
+                isModelPartiallyValid = allErrors.Count == 1 && allErrors[0] == "Only pdf file is allowed.";
             }
-        }
-        */
-            if (ModelState.IsValid)
+            //userDocs.PostedFile = PostedFile;
+            if (ModelState.IsValid || isModelPartiallyValid)
             {
-                
-                if (file.ContentLength > 0)
+                if (userDocs.PostedFile.ContentLength > 0)
                 {
-                    var fileExtension = Path.GetExtension(file.FileName);
-                    var fileNameWithoutExtension = Guid.NewGuid().ToString();
-                    var fileNameToSave = $"{fileNameWithoutExtension}{fileExtension}";//Path.GetFileName(file.FileName);
-                    var pdfFileName = $"{fileNameWithoutExtension}.pdf";                    
-                    int _FileSize = file.ContentLength;
-                    string directoryPath = Server.MapPath("~/UserFileUploads");
-                    string path = Path.Combine(directoryPath, fileNameToSave);
-                    string pdfFilePath = Path.Combine(directoryPath, pdfFileName);
-                    file.SaveAs(path);
-                    MakePdfCopy(path, pdfFilePath);
+                    userDocs.DocumentExtension = Path.GetExtension(userDocs.PostedFile.FileName);
+                    userDocs.DocumentFileName = $"{Guid.NewGuid().ToString()}{userDocs.DocumentExtension}";
+                    userDocs.DocumentFilePath = Path.Combine(Server.MapPath("~/UserFileUploads"), userDocs.DocumentFileName);
+                    userDocs.PostedFile.SaveAs(userDocs.DocumentFilePath);
+                    
+                    var dbObjectToCreate = userDocs.GetDbObjectToCreate(GetLoggedInUserId());
 
-                    userDocs.DocName = userDocs.DocName;
-                    userDocs.DocFileName = fileNameToSave;
-                    userDocs.DocCreatedDate = DateTime.Now;
-                    userDocs.UserId= int.Parse(System.Web.HttpContext.Current.User.Identity.GetUserId());
-                    userDocs.DocTypeId = userDocs.DocTypeId;
-                    userDocs.DocExt = fileExtension;
-                    userDocs.DocFilePath = path;
+                    DbContext.UserDocs.Add(dbObjectToCreate);
+                    DbContext.SaveChanges();
+                    return RedirectToAction("Index");
                 }
-
-
-               // string path = Path.Combine(Server.MapPath("~/UserFileUploads"), Path.GetFileName(file.FileName));
-                //file.SaveAs(path);
-                
-                db.UserDocs.Add(userDocs);
-
-                db.SaveChanges();
-                return RedirectToAction("Index");
             }
 
             return View(userDocs);
         }
-
-        private void MakePdfCopy(string fileNameToSave, string pdfFileName)
-        {
-            var helper = new PrintHelper();
-            helper.PrintFileAsPdf(fileNameToSave, pdfFileName);
-        }
-
-        // GET: UserDocs/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UserDocs userDocs = db.UserDocs.Find(id);
-            if (userDocs == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.StatusId = new SelectList(MemoryCache.Default.Get(Common.Constants.RecordStatusListName) as Dictionary<int, string>, "Key", "Value", userDocs.StatusId);
-
-
-            return View(userDocs);
-        }
-
-        // POST: UserDocs/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DocId,DocName,DocTypeId,DocExt,DocFileName,DocFilePath,UserId,DocCreatedDate,EditedBy,EditedOn,StatusId",Exclude = "AddedBy,AddedOn")] UserDocs userDocs)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(userDocs).State = EntityState.Modified;
-                db.Entry(userDocs).Property(uco => uco.AddedBy).IsModified = false;
-                db.Entry(userDocs).Property(uco => uco.AddedOn).IsModified = false;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(userDocs);
-        }
-
-        // GET: UserDocs/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UserDocs userDocs = db.UserDocs.Find(id);
-            if (userDocs == null)
-            {
-                return HttpNotFound();
-            }
-            return View(userDocs);
-        }
-
-        // POST: UserDocs/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-
-            try
-            {
-                UserDocs userDocs = db.UserDocs.Find(id);
-                userDocs.StatusId = 0; // on delete setting up the row status column to 0 for softdelete. 1 is active
-                db.Entry(userDocs).State = EntityState.Modified;
-                //db.Users.Remove(users);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw e;
-            }
-        }
+        
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                DbContext.Dispose();
             }
             base.Dispose(disposing);
         }

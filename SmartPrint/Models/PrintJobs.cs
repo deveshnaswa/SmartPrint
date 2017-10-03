@@ -81,7 +81,6 @@ namespace SmartPrint.Models
         [Column(TypeName = "DateTime2")]
         public DateTime EditedOn { get; set; }
         public int StatusId { get; set; }
-        public virtual RStatus RStatus { get; set; }
         //public virtual RecordStatus RecordStatus { get; set; }
     }
 }

@@ -8,6 +8,7 @@ using SmartPrint.Models;
 using System.Data.Entity;
 using System.Management;
 using SmartPrint.CustomLibaries;
+using SmartPrint.Common.Enums;
 
 namespace SmartPrint.Controllers
 {
@@ -18,11 +19,7 @@ namespace SmartPrint.Controllers
         // GET: PrintJobs
         public ActionResult Index()
         {
-            // get all from printjobs table
-         
-
-            var results = db.PrintJobs.Where(o => (o.JobStatusId== 0))
-                                        .Where(o => (o.PrintJobQueueRefId!= 0));
+            var results = db.PrintJobs.Where(o => (o.JobStatusId == (int)PrintJobStatus.Processing));//.Where(o => (o.PrintJobQueueRefId!= 0));
 
             foreach (var Job in results)
             {
@@ -32,7 +29,7 @@ namespace SmartPrint.Controllers
                 var documentName = Job.DocFileNameOnServer;
 
                 // get status from print job queue win32_pintjobs
-                var jobQueueStatus = GetPrintJobsCollection(printerName,printjobRefid,documentName);
+                var jobQueueStatus = GetPrintJobStatus(printerName,printjobRefid,documentName);
 
 
                 using (var db = new MainDbContext())
@@ -71,42 +68,29 @@ namespace SmartPrint.Controllers
 
 
 
-        public static string GetPrintJobsCollection(string printerName,int jobRefId,string fileName)
+        public static string GetPrintJobStatus(string printerName,int jobRefId,string fileName)
         {
            //StringCollection printJobCollection = new StringCollection();
             var jobStatus = string.Empty;
-            string searchQuery = "SELECT * FROM Win32_PrintJob WHERE JobId='" + jobRefId + "' and Document = '"+fileName+"'";
-
-           ManagementObjectSearcher searchPrintJobs =
-                new ManagementObjectSearcher(searchQuery);
-            ManagementObjectCollection prntJobCollection = searchPrintJobs.Get();
+            var jobName = $"{printerName}, {jobRefId}";
+            //string searchQuery = "SELECT * FROM Win32_PrintJob WHERE JobId='" + jobRefId + "' and Document = '"+fileName+"'";
+            string searchQuery = $"SELECT * FROM Win32_PrintJob WHERE Name = '{jobName}'" ;
+            var searchPrintJobs = new ManagementObjectSearcher(searchQuery);
+            var prntJobCollection = searchPrintJobs.Get();
             foreach (ManagementObject prntJob in prntJobCollection)
             {
                 var printerJob = string.Empty;
-
-                // check criteria first : if the printJob property [Name] is not null
-
-                if (prntJob.Properties["Name"].Value != null)
-                {
-                    printerJob = prntJob.Properties["Name"].Value.ToString();
-                    char[] splitArr = new char[1];
-                    splitArr[0] = Convert.ToChar(",");
-                    string prnterName = printerJob.Split(splitArr)[0];
-
-                    // check second criteria and match if PrintJob=>Printer =JobQueue=>Printer
-                    if (String.Compare(prnterName, printerName, true) == 0)
-                    {
-                        
-                       
-                        if (prntJob.Properties["JobStatus"].Value != null)
-                        {
-                            jobStatus = prntJob.Properties["JobStatus"].Value.ToString();
-                        }
-                    }
-
-                }
+                jobStatus = prntJob.Properties["JobStatus"].Value.ToString();
             }
             return jobStatus;
+        }
+
+        public ActionResult GetAllJobs()
+        {
+            string searchQuery = "SELECT * FROM Win32_PrintJob";
+            var searchPrintJobs = new ManagementObjectSearcher(searchQuery);
+            var prntJobCollection = searchPrintJobs.Get();
+            return Json("", JsonRequestBehavior.AllowGet);
         }
     }
 }

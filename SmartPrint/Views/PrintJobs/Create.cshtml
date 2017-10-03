@@ -1,105 +1,50 @@
-﻿@using SmartPrint.Models
-@model SmartPrint.Models.PrintJobs
+﻿@model SmartPrint.ViewModels.PrintJobsViewModel
 
 @{
     ViewBag.Title = "Create";
-    var userdoc = ViewBag.UserDocsId;
-    var totalpage = ViewBag.TotalPages;
-
-    Document document = null;
-    if (ViewBag.Document != null)
-    {
-        // When a document is sent by the controller, we convert it to a proper Document object
-        document = ViewBag.Document as Document;
-    }
 }
 @section Scripts {
     <script>
-        function GetPrintCosts() {
-
-
-            var printCostId = $('#PrintCostId').val();
-            $.ajax({
-                url: '/PrintJobs/GetPrintCosts',
-                type: "GET",
-                dataType: "JSON",
-                data: { PrintcostId: PrintcostId },
-                success: function (printcosts) {
-
-                    //console.log(printcosts)
-                    $('#MonoUnitcost').val(printcosts[0].MonoCostPerPage);
-                    $('#ColorUnitcost').val(printcosts[0].MonoCostPerPage);
-
-                },
-                error: function (e) {
-                    alert(e);
-                }
-
-            });
+        var unitColorCost = @Model.ColorUnitcost;
+        var unitMonoCost = @Model.MonoUnitcost;
+        var printerDetails = @Html.Raw(Json.Encode(
+            ViewBag.PrinterList
+        ));
+        function CalculatePrintCost()
+        {
+            var pagesFrom = parseInt($('#PagesFrom').val());
+            var pagesTo = parseInt($('#PagesTo').val());
+            var totalNoOfPages = Math.abs((pagesTo - pagesFrom)) + 1;
+            var noOfCopies = parseInt($('#NumCopies').val());
+            var isColorSelected = $('#IsColor').is(":checked");
+            var totalPrintingCost = 0;
+            if (isColorSelected)
+            {
+                totalPrintingCost = totalNoOfPages * unitColorCost * noOfCopies;
+            }
+            else
+            {
+                totalPrintingCost = totalNoOfPages * unitMonoCost * noOfCopies;
+            }
+            $('#TotalPageCost').val(totalPrintingCost);
         }
-
         function GetPrinterProperties() {
-
-
             var printerSelected = $('#PrinterName').val();
-            $.ajax({
-                url: '/PrintJobs/GetPrinterProperties',
-                type: "GET",
-                dataType: "JSON",
-                data: { PrinterSelected: printerSelected },
-                success: function (printprops) {
-                    console.log(printprops);
-                    $('#PrinterPath').val(printprops[0].Location);
-
-                    if (printprops[0].IsColored == false) {
-                        // our printer does not support colored printing
-                        ColorPrintingSettings(enable = false);
-                        // $('#MonoPages').val(printcosts[0].MonoCostPerPage);.attr('checked',false);
-                        // $('#IsColor').attr('checked', false);
-                        // $('#IsColor').attr('disabled', 'disabled');
-                    }
-                    else if (printprops[0].IsColored == true) {
-                        //printer supports colored printing
-                        ColorPrintingSettings(enable = true);
-                        // $('#IsColor').attr('checked', true);
-                        //$('#IsColor').attr('disabled', 'enabled');
-
-                    }
-
-
-                    if (printprops[0].IsDuplex == false) {
-                        // $('#MonoPages').val(printcosts[0].MonoCostPerPage);
-                        // $('#IsDuplex').attr('checked', false);
-                        //` $('#IsDuplex').attr('disabled', 'disabled');
-                        DuplexPrintingSettings(enable = false);
-
-                    }
-                    else if (printprops[0].IsDuplex == true) {
-                        DuplexPrintingSettings(enable = true);
-                        // $('#MonoPages').val(printcosts[0].MonoCostPerPage);
-                        //$('#IsDuplex').attr('checked', false);
-                        // $('#IsDuplex').attr('disabled', 'enabled');
-
-                    }
-
-                    //$('#MonoPages').val(printcosts[0].MonoCostPerPage);
-
-                },
-                error: function (e) {
-                    alert(e);
-                }
-
-            });
+            if (printerSelected == "") {
+                ColorPrintingSettings(false);
+                DuplexPrintingSettings(false);
+            }
+            else {
+                var selectedPrinterDetails = printerDetails[printerSelected];
+                ColorPrintingSettings(selectedPrinterDetails.IsColored);
+                DuplexPrintingSettings(selectedPrinterDetails.IsDuplex);
+            }
+            CalculatePrintCost();
         }
 
 
         function ColorPrintingSettings(state) {
             if (state == false) {
-                // color printing not supported
-                //check if checkbox is enabled or not and reset the value to uncheck
-
-                //if()
-
                 if (!$("#IsColor").is(':disabled')) {
                     $('#IsColor').attr('checked', false);
                     $('#IsColor').attr('disabled', 'disabled');
@@ -111,16 +56,12 @@
                 }
             }
             else if (state == true) {
-                // color printing is enabled
-                // enable the checkbox and reset the values
                 if (!$("#IsColor").is(':disabled')) {
                     $('#IsColor').attr('checked', false);
-                    //$('#IsColor').attr('disabled', 'disabled');
                 }
                 else {
                     $('#IsColor').removeAttr('disabled');
                     $('#IsColor').attr('checked', false);
-                    //$('#IsColor').attr('disabled', 'disabled');
                 }
             }
 
@@ -129,10 +70,6 @@
 
         function DuplexPrintingSettings(state) {
             if (state == false) {
-                // duplex printing not supported
-                //check if checkbox is enabled or not and reset the value to uncheck
-
-                //if()
 
                 if (!$("#IsDuplex").is(':disabled')) {
                     $('#IsDuplex').attr('checked', false);
@@ -145,25 +82,25 @@
                 }
             }
             else if (state == true) {
-                // color printing is enabled
-                // enable the checkbox and reset the values
                 if (!$("#IsDuplex").is(':disabled')) {
                     $('#IsDuplex').attr('checked', false);
-                    //$('#IsDuplex').attr('disabled', 'disabled');
                 }
                 else {
                     $('#IsDuplex').removeAttr('disabled');
                     $('#IsDuplex').attr('checked', false);
-                    //$('#IsDuplex').attr('disabled', 'disabled');
                 }
             }
 
         }
+        $(document).ready(function () { GetPrinterProperties(); });
     </script>
 
 }
-<h2>Create</h2>
+<div class="row">
+    <h2 >Print <span class="text-success">@Model.DocumentName</span></h2>
+</div>
 
+<hr />
 
 <div id="form">
 
@@ -173,320 +110,84 @@
         @Html.AntiForgeryToken()
 
         <div class="form-horizontal">
-            <h4>PrintJobs</h4>
-        <hr />
-        <div class="row">
-            <div class="col-md-6">
+            @Html.ValidationSummary(true, null ,new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-md-6">
+                    @Html.HiddenFor(model => model.DocumentId)
+                    @Html.HiddenFor(model => model.PrintcostId)
 
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
 
-                @Html.HiddenFor(model => model.UserId)
-                @Html.HiddenFor(model => model.DocId)
-                @Html.HiddenFor(model => model.DocName)
-                @Html.HiddenFor(model => model.DocTotalPages)
-                @Html.HiddenFor(model => model.DocTypeId)
-                @Html.HiddenFor(model => model.DocExt)
-                @Html.HiddenFor(model => model.DocFileNameOnServer)
-                @Html.HiddenFor(model => model.DocFilePath)
+                        @Html.LabelFor(model => model.PrinterName, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(model => model.PrinterName, new SelectList(ViewBag.PrinterList, "Key", "Key"),"Select Printer",htmlAttributes: new { @class = "form-control", @onchange = "GetPrinterProperties()" })
+                            @Html.ValidationMessageFor(model => model.PrinterName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
-                @Html.HiddenFor(model => model.UnitCost)
-                @Html.HiddenFor(model => model.IsCollate)
-                @Html.HiddenFor(model => model.MonoUnitcost)
-                @Html.HiddenFor(model => model.ColorUnitcost)
-                @Html.HiddenFor(model => model.MonoPages)
-                @Html.HiddenFor(model => model.ColorPages)
-                @Html.HiddenFor(model => model.PrinterPath)
-                @Html.HiddenFor(model => model.PrintJobQueueRefId)
-                @Html.HiddenFor(model => model.UnitItem)
-                @Html.HiddenFor(model => model.CreditUsed)
-                @Html.HiddenFor(model => model.TotalPageCount)
-                @Html.HiddenFor(model => model.TotalPageCost)
-                @Html.HiddenFor(model => model.JobError)
-                @Html.HiddenFor(model => model.JobErrorRemarks)
-                @Html.HiddenFor(model => model.PrinterPath)
-                @Html.HiddenFor(model => model.JobStatusId)
-                @Html.HiddenFor(model => model.StatusId)
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PagesFrom, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.PagesFrom, new { htmlAttributes = new { min = 1, max = ViewBag.TotalPages, @class = "form-control" ,@onchange = "CalculatePrintCost()" } })
+                            @Html.ValidationMessageFor(model => model.PagesFrom, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PagesTo, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.PagesTo, new { htmlAttributes = new { min = 1, max = ViewBag.TotalPages, @class = "form-control", @onchange = "CalculatePrintCost()" } })
+                            @Html.ValidationMessageFor(model => model.PagesTo, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.NumCopies, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.NumCopies, new { htmlAttributes = new { min = 1, max = 10, @class = "form-control", @onchange = "CalculatePrintCost()" } })
+                            @Html.ValidationMessageFor(model => model.NumCopies, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    @Html.LabelFor(model => model.DocName, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.DocName, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-                        @Html.ValidationMessageFor(model => model.DocName, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsColor, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.IsColor, new { htmlAttributes = new { @class = "form-control", @onchange = "CalculatePrintCost()" ,disabled = "disabled" } })
+                            @Html.ValidationMessageFor(model => model.IsColor, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsDuplex, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.IsDuplex, new { htmlAttributes = new { @class = "form-control" ,disabled = "disabled" } })
+                            @Html.ValidationMessageFor(model => model.IsDuplex, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TotalPageCost, htmlAttributes: new { @class = "control-label col-md-4"})
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.TotalPageCost, new { htmlAttributes = new { @class = "form-control", disabled="disabled" } })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-4 col-md-8">
+                            <input type="submit" value="Print" class="btn btn-primary" />
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-
-                    @Html.LabelFor(model => model.PrinterName, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-
-                        <!--@Html.EditorFor(model => model.PrinterName, new {htmlAttributes = new {@class = "form-control"}})-->
-                        @Html.DropDownList("PrinterName", null, "Select", htmlAttributes: new { @class = "form-control", @onchange = "GetPrinterProperties()" })
-                        @Html.ValidationMessageFor(model => model.PrinterName, "", new { @class = "text-danger" })
+                <div class="col-md-6">
+                    <div class="embed-responsive embed-responsive-4by4">
+                        <iframe class="embed-responsive-item" id="FileReload" src="@ViewBag.DocumentPath" type="Content-Disposition: inline; @ViewBag.MimeMappings">></iframe>
                     </div>
                 </div>
-
-                <div class="form-group">
-
-                    @Html.LabelFor(model => model.PrintcostId, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        <!--@Html.EditorFor(model => model.PrintcostId, new {htmlAttributes = new {@class = "form-control", disabled = "disabled"}})-->
-                        @Html.DropDownList("PrintcostId", null, "Select", htmlAttributes: new { @class = "form-control", @onchange = "GetPrintCosts()" })
-                        @Html.ValidationMessageFor(model => model.PrintcostId, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(model => model.PagesFrom, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.PagesFrom, new { htmlAttributes = new {  min = 1, max = totalpage, @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.PagesFrom, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(model => model.PagesTo, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.PagesTo, new { htmlAttributes = new { min = 1, max = totalpage, @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.PagesTo, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(model => model.NumCopies, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.NumCopies, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.NumCopies, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(model => model.IsColor, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.CheckBoxFor(model => model.IsColor, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.IsColor, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(model => model.IsDuplex, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.CheckBoxFor(model => model.IsDuplex, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.IsDuplex, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
-                @*<div class="form-group">
-                @Html.LabelFor(model => model.IsCollate, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.CheckBoxFor(model => model.IsCollate, new { htmlAttributes = new { @class = "form-control"} })
-                    @Html.ValidationMessageFor(model => model.IsCollate, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.UnitItem, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.UnitItem, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.UnitItem, "", new { @class = "text-danger" })
-                </div>
-            </div>*@
-
-                <div class="form-group">
-                    @Html.LabelFor(model => model.JobRemarks, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.JobRemarks, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.JobRemarks, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
-
-
-                @*<div class="form-group">
-                @Html.LabelFor(model => model.TotalPageCount, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.TotalPageCount, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-                    @Html.ValidationMessageFor(model => model.TotalPageCount, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.TotalPageCost, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.TotalPageCost, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-                    @Html.ValidationMessageFor(model => model.TotalPageCost, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.CreditUsed, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.CreditUsed, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-                    @Html.ValidationMessageFor(model => model.CreditUsed, "", new { @class = "text-danger" })
-                </div>
-            </div>*@
-
-                @*<div class="form-group">
-                    @Html.LabelFor(model => model.PrintJobQueueRefId, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.PrintJobQueueRefId, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-                        @Html.ValidationMessageFor(model => model.PrintJobQueueRefId, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-            <div class="form-group">
-                    @Html.LabelFor(model => model.JobError, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.JobError, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-                        @Html.ValidationMessageFor(model => model.JobError, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(model => model.JobErrorRemarks, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.JobErrorRemarks, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-                        @Html.ValidationMessageFor(model => model.JobErrorRemarks, "", new { @class = "text-danger" })
-                    </div>
-                </div>*@
-
-
-                @*<div class="form-group">
-                @Html.LabelFor(model => model.PrinterPath, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.PrinterPath, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-                    @Html.ValidationMessageFor(model => model.PrinterPath, "", new { @class = "text-danger" })
-                </div>
-            </div>*@
-
-                @*<div class="form-group">
-                @Html.LabelFor(model => model.JobStatusId, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.JobStatusId, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.JobStatusId, "", new { @class = "text-danger" })
-                </div>
-            </div>*@
-                <!--
-        <div class="form-group">
-            @Html.LabelFor(model => model.AddedBy, htmlAttributes: new {@class = "control-label col-md-2"})
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.AddedBy, new {htmlAttributes = new {@class = "form-control"}})
-                @Html.ValidationMessageFor(model => model.AddedBy, "", new {@class = "text-danger"})
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.AddedOn, htmlAttributes: new {@class = "control-label col-md-2"})
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.AddedOn, new {htmlAttributes = new {@class = "form-control"}})
-                @Html.ValidationMessageFor(model => model.AddedOn, "", new {@class = "text-danger"})
-            </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.EditedBy, htmlAttributes: new {@class = "control-label col-md-2"})
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EditedBy, new {htmlAttributes = new {@class = "form-control"}})
-                @Html.ValidationMessageFor(model => model.EditedBy, "", new {@class = "text-danger"})
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.EditedOn, htmlAttributes: new {@class = "control-label col-md-2"})
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EditedOn, new {htmlAttributes = new {@class = "form-control"}})
-                @Html.ValidationMessageFor(model => model.EditedOn, "", new {@class = "text-danger"})
-            </div>
-        </div>
-        -->
-                <div class="form-group">
-
-                    @Html.LabelFor(model => model.StatusId, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-
-                        <!--@Html.EditorFor(model => model.StatusId, new {htmlAttributes = new {@class = "form-control"}})-->
-                        @Html.DropDownList("StatusId", null, htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.StatusId, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Create" class="btn btn-default" />
-                    </div>
-                </div>
-            </div>
-            </div>
-        <div class="col-md-6">
-            @*
-            iframe for document viewer    
-            *@
-            @{
-
-
-
-                ViewBag.UserDocId = userdoc;
-                var fileSrc = "../../UserFileUploads/" + document.GetName();
-                string mineMap = MimeMapping.GetMimeMapping(document.GetName());
-
-            }
-
-           
-            <iframe style="width:615px; height:450px;" id="FileReload" src="@(fileSrc)" type="Content-Disposition: inline; @(mineMap)" >></iframe>
-        </div>
-        </div><br/>
-
-
-    }
-
-
-
-    <!--
-    The div on the right side contains the DocuVieware Lite integration. It is configured to fill all the space available within the div.
-    When the view is rendered, the document held by the ViewBag (if exists, i.e. after a form post) is loaded within DocuVieware Lite.
-
-
-
-    <div id="viewer_container">
-        @{/*
-            DocuVieware docuVieware = new DocuVieware
-            {
-                ID = "DocuVieware1",
-                // CacheFolder = MvcApplication.GetCacheDirectory(),
-                Height = new System.Web.UI.WebControls.Unit("100%"),
-                Width = new System.Web.UI.WebControls.Unit("100%")
-            };
-            if (document != null) // When a document is sent from controller, we want to display it
-            {
-                GdPictureStatus status = docuVieware.LoadFromStream(new FileStream(document.GetPath(), FileMode.Open, FileAccess.Read), true, document.GetName());
-                if (status != GdPictureStatus.OK) // If LoadFromStream failed, we want to display the error status
-                {
-                    <script>
-                        // setTimeout allows the page to keep loading even with the alert so the UI isn't frozen until user clicks OK
-                        setTimeout(function () { alert("An error occured: @status"); }, 1);
-                    </script>
-                }
-            }
-            docuVieware.RenderControl(Output);
-            */
-        }
-    </div>-->
+                    }
 
     <div>
         @Html.ActionLink("Back to List", "Index")
     </div>
 </div>
-<!--
-<div id="documentviewer"class="col-md-6">
-    @{
-        /*
-
-
-        ViewBag.UserDocId = userdoc;
-        var fileSrc = "../../UserFileUploads/" + document.GetName();
-        string mineMap = MimeMapping.GetMimeMapping(document.GetName());
-        */
-    }
-
-
-</div>-->

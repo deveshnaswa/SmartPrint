@@ -35,7 +35,9 @@ namespace SmartPrint
         public System.Data.Entity.DbSet<SmartPrint.Models.Configurations> Configurations { get; set; }
 
         public System.Data.Entity.DbSet<SmartPrint.ViewModels.UserTransactionViewModel> UserTransactionViewModels { get; set; }
-        
 
+        public System.Data.Entity.DbSet<SmartPrint.ViewModels.UserDocsViewModel> UserDocsViewModels { get; set; }
+
+        public System.Data.Entity.DbSet<SmartPrint.ViewModels.PrintJobsViewModel> PrintJobsViewModels { get; set; }
     }
 }

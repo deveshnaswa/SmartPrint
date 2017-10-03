@@ -1,101 +1,76 @@
-﻿@model IEnumerable<SmartPrint.Models.UserDocs>
+﻿@model IEnumerable<SmartPrint.ViewModels.UserDocsViewModel>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "My Documents";
+    var pageHeading = "My Documents";
 }
 
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.DocName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DocTypeId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DocExt)
-        </th>
-        <!--<th>
-            @Html.DisplayNameFor(model => model.DocFileName)
-        </th>
-        
-        <th>
-            @Html.DisplayNameFor(model => model.DocFilePath)
-        </th>-->
-        <th>
-            @Html.DisplayNameFor(model => model.UserId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DocCreatedDate)
-        </th>
-        <!--<th>
-            @Html.DisplayNameFor(model => model.AddedBy)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AddedOn)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.EditedBy)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.EditedOn)
-        </th>-->
-        <th>
-            @Html.DisplayNameFor(model => model.StatusId)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.DocName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DocTypes.DocType)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DocExt)
-        </td>
-         <!--<td>
-            @Html.DisplayFor(modelItem => item.DocFileName)
-        </td>
-       <td>
-            @Html.DisplayFor(modelItem => item.DocFilePath)
-        </td>-->
-        <td>
-            @Html.DisplayFor(modelItem => item.Users.FName)  @Html.DisplayFor(modelItem => item.Users.LName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DocCreatedDate)
-        </td>
-        <!--<td>
-            @Html.DisplayFor(modelItem => item.AddedBy)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AddedOn)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EditedBy)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EditedOn)
-        </td>-->
-        <td>
-            @Html.DisplayFor(modelItem => item.RStatus.StatusName)
-        </td>
-        <td>
-            @Html.ActionLink("Print Job", "Create", "PrintJobs", new { id = item.DocId }, null) |
-            @Html.ActionLink("Edit", "Edit", new { id=item.DocId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.DocId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.DocId })
-        </td>
-    </tr>
+@if (ViewBag.IsUserAdmin)
+{
+    ViewBag.Title = "User Documents";
+    pageHeading = "User Documents";
 }
 
-</table>
+<h2>@pageHeading</h2>
+
+<div class="row">
+    <div class="col-md-2">
+        @Html.ActionLink("Upload New Document", "Create", "UserDocs", new { }, new { @class = "btn btn-default" })
+    </div>
+    @if (ViewBag.IsUserAdmin)
+    {
+    <div class="col-md-10">
+        @using (Html.BeginForm("Index", "UserDocs", FormMethod.Post, new { @class = "form-inline pull-right" }))
+        {
+            <div class="form-group">
+                @Html.TextBox("SearchTerm", (string)ViewBag.SearchTerm, new { @class = "form-control", placeholder = "Name of User" })
+            </div>
+            <input type="submit" value="Search" class="btn btn-primary" />
+        }
+    </div>
+    }
+</div>
+<div class="row">
+    <div class="form-group"></div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-hover">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.DocumentName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NameOfUser)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DocumentCreationDate)
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DocumentName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NameOfUser)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DocumentCreationDate)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Print Job", "Create", "PrintJobs", new { id = item.DocumentId }, null) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.DocumentId })
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>
+
+

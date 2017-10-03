@@ -19,15 +19,8 @@ namespace SmartPrint.Models
         [DisplayName("Last Name")]
         public string LName { get; set; }
 
-        public string UserName
-        {
-            get { return FName + " " + LName; }
-            
-            
-    }
-
         [Required]
-        [DisplayName("Email: (Username)")]
+        [DisplayName("Email (Username)")]
         [DataType(DataType.EmailAddress)]
         public string UserEmail { get; set; }
 
